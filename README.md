@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> Heracles is, currently, just a direct fork of Hercules with some additions or fixes. As such, all file names and copyright headers will be left as is.
+> The intention is being 100% compatible with Hercules and HPM plugins - at least for now.
+
 Hercules
 ========
 
