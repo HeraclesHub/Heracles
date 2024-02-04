@@ -71,17 +71,17 @@ static void display_title(void)
 	const char *vcstype = sysinfo->vcstype();
 
 	ShowMessage("\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                 Hercules Development Team presents                   "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                _   _                     _                           "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"               | | | |                   | |                          "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"               | |_| | ___ _ __ ___ _   _| | ___  ___                 "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"               |  _  |/ _ \\ '__/ __| | | | |/ _ \\/ __|                "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"               | | | |  __/ | | (__| |_| | |  __/\\__ \\                "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"               \\_| |_/\\___|_|  \\___|\\__,_|_|\\___||___/                "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                      http://herc.ws/board/                           "CL_CLL""CL_NORMAL"\n");
-	ShowMessage(""CL_BG_RED""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                  Heracles Hub and others presents                    "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                _   _                    _                            "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"               | | | |                  | |                           "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"               | |_| | ___ _ __ ___  ___| | ___  ___                  "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"               |  _  |/ _ \\ '__/_  |/ __| |/ _ \\/ __|                 "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"               | | | |  __/ || |_|_| (__| |  __/\\__ \\                 "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"               \\_| |_/\\___|_| \\__,_|\\___|_|\\___||___/                 "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                   https://github.com/HeraclesHub                     "CL_CLL""CL_NORMAL"\n");
+	ShowMessage(""CL_BG_BLUE""CL_BT_WHITE"                                                                      "CL_CLL""CL_NORMAL"\n");
 
 	ShowInfo("Hercules %d-bit for %s\n", sysinfo->is64bit() ? 64 : 32, sysinfo->platform());
 	ShowInfo("Build revision: '"CL_WHITE"%d"CL_RESET"'\n", sysinfo->build_revision());
