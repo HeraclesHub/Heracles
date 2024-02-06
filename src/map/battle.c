@@ -350,9 +350,16 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 		BL_UCAST(BL_PC, src)->delayed_damage++;
 	}
 #ifdef WALKDELAY_SYNC
-	timer->add(tick + ddelay, unit->set_walkdelay_timer, target->id, ddelay);
+	int damage_delay = amotion;
+	int mob_delay;
+
+	if (src->type == BL_MOB && (mob_delay = BL_UCCAST(BL_MOB, src)->status.ddelay) > 0)
+		damage_delay = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
+
+	timer->add(timer->gettick() + damage_delay, battle->delay_damage_sub, 0, (intptr_t)dat);
+#else
+	timer->add(tick + amotion, battle->delay_damage_sub, 0, (intptr_t)dat);
 #endif
-	timer->add(tick+amotion, battle->delay_damage_sub, 0, (intptr_t)dat);
 
 	return 0;
 }

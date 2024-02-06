@@ -106,6 +106,9 @@
 
 /// Uncomment to allow flinch animation and walk delay to be synced
 /// Reduces positional lag when getting hit
+/// Note: Some mobs's act files have improper attack sequences
+/// Consider fixing those before enabling this setting
+/// More info: https://github.com/csnv/act-parser/blob/master/docs/fix-attack-delay.md
 //#define WALKDELAY_SYNC
 
 /**

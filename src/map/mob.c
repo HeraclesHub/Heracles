@@ -5241,6 +5241,13 @@ static int mob_read_db_sub(struct config_setting_t *mobt, int n, const char *sou
 			md.status.dmotion = i32;
 	}
 
+#ifdef WALKDELAY_SYNC
+	if (map->setting_lookup_const(mobt, "DamageDelay", &i32) && i32 >= 0)
+		md.status.ddelay = cap_value(i32, 0, 10000);
+	else
+		md.status.ddelay = 0;
+#endif
+
 	// MVP EXP Bonus: MEXP
 	if (map->setting_lookup_const(mobt, "MvpExp", &i32) && i32 >= 0) {
 		// Some new MVP's MEXP multiple by high exp-rate cause overflow. [LuzZza]

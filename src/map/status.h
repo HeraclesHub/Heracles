@@ -1118,6 +1118,9 @@ struct status_data {
 		matk_min, matk_max,
 		speed,
 		amotion, adelay, dmotion,
+#ifdef WALKDELAY_SYNC
+		ddelay,
+#endif
 		mode;
 	int32 hit, flee, cri, flee2,
 		def2, mdef2,
