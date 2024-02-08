@@ -202,8 +202,8 @@
     <ClCompile Include="..\src\common\showmsg.c">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\3rdparty\mt19937ar\mt19937ar.c">
-      <Filter>3rdparty\mt19937ar</Filter>
+    <ClCompile Include="..\3rdparty\sfmt\SFMT.c">
+      <Filter>3rdparty\sfmt</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\libconfig\grammar.c">
       <Filter>3rdparty\libconfig</Filter>
@@ -468,8 +468,17 @@
     <ClInclude Include="..\src\common\showmsg.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\3rdparty\mt19937ar\mt19937ar.h">
-      <Filter>3rdparty\mt19937ar</Filter>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-common.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params19937.h">
+      <Filter>3rdparty\sfmt</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\libconfig\grammar.h">
       <Filter>3rdparty\libconfig</Filter>
@@ -563,7 +572,7 @@
     <Filter Include="3rdparty">
       <UniqueIdentifier>{c4845ea8-bcc7-411b-af29-e3842adb6714}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdparty\mt19937ar">
+    <Filter Include="3rdparty\sfmt">
       <UniqueIdentifier>{fcf23386-ddba-4a72-9b41-62f8e2d0e6c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="3rdparty\libconfig">

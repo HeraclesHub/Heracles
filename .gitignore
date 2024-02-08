@@ -6,6 +6,7 @@
 .local.vimrc
 .ycm_extra_conf.py*
 Thumbs.db
+.vscode
 
 # /
 /*.exe
@@ -73,9 +74,9 @@ Thumbs.db
 # /3rdparty/libgif/
 /3rdparty/libgif/Makefile
 
-# /3rdparty/mt19937ar/
-/3rdparty/mt19937ar/Makefile
-/3rdparty/mt19937ar/*.o
+# /3rdparty/sfmt/
+/3rdparty/sfmt/Makefile
+/3rdparty/sfmt/*.o
 
 # /cache/
 /cache/

@@ -22,6 +22,7 @@
 #define COMMON_RANDOM_H
 
 #include "common/hercules.h"
+#include "sfmt/SFMT.h"
 
 /** @file
  * The random number generator interface.
@@ -29,6 +30,7 @@
 
 /// Random interface.
 struct rnd_interface {
+	sfmt_t sfmt;
 	/**
 	 * Interface initialization.
 	 *
