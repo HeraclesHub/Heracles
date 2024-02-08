@@ -26,7 +26,7 @@
 #include "common/showmsg.h"
 #include "common/timer.h" // gettick
 
-#include <mt19937ar/mt19937ar.h> // init_genrand, genrand_int32, genrand_res53
+#include <sfmt/SFMT.h> // init_genrand, genrand_int32, genrand_res53
 #include <stdlib.h>
 
 #if defined(WIN32)
@@ -46,20 +46,21 @@ struct rnd_interface *rnd;
 /// @copydoc rnd_interface::init()
 static void rnd_init(void)
 {
-	unsigned long seed = (unsigned long)timer->gettick();
-	seed += (unsigned long)time(NULL);
+
+	uint32 seed = (uint32)timer->gettick();
+	seed += (uint32)time(NULL);
 #if defined(WIN32)
-	seed += (unsigned long)GetCurrentProcessId();
-	seed += (unsigned long)GetCurrentThreadId();
+	seed += (uint32)GetCurrentProcessId();
+	seed += (uint32)GetCurrentThreadId();
 #else
 #if defined(HAVE_GETPID)
-	seed += (unsigned long)getpid();
+	seed += (uint32)getpid();
 #endif // HAVE_GETPID
 #if defined(HAVE_GETTID)
-	seed += (unsigned long)gettid();
+	seed += (uint32)gettid();
 #endif // HAVE_GETTID
 #endif
-	init_genrand(seed);
+	sfmt_init_gen_rand(&rnd->sfmt, seed);
 
 	// Also initialize the stdlib rng, just in case it's used somewhere.
 	srand((unsigned int)seed);
@@ -73,13 +74,13 @@ static void rnd_final(void)
 /// @copydoc rnd_interface::seed()
 static void rnd_seed(uint32 seed)
 {
-	init_genrand(seed);
+	sfmt_init_gen_rand(&rnd->sfmt, seed);
 }
 
 /// @copydoc rnd_interface::random()
 static int32 rnd_random(void)
 {
-	return (int32)genrand_int31();
+	return (int32)(sfmt_genrand_uint32(&rnd->sfmt) >> 1);
 }
 
 /// @copydoc rnd_interface::roll()
@@ -99,13 +100,13 @@ static int32 rnd_value(int32 min, int32 max)
 /// @copydoc rnd_interface::uniform()
 static double rnd_uniform(void)
 {
-	return ((uint32)genrand_int32())*(1.0/4294967296.0);// divided by 2^32
+	return sfmt_to_real2(sfmt_genrand_uint32(&rnd->sfmt));
 }
 
 /// @copydoc rnd_interface::uniform53()
 static double rnd_uniform53(void)
 {
-	return genrand_res53();
+	return sfmt_to_res53(sfmt_genrand_uint32(&rnd->sfmt));
 }
 
 /// Interface base initialization.

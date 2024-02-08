@@ -49,9 +49,9 @@ else
 	LIBBACKTRACE_H =
 endif
 
-MT19937AR_D = $(THIRDPARTY_D)/mt19937ar
-MT19937AR_OBJ = $(MT19937AR_D)/mt19937ar.o
-MT19937AR_H = $(MT19937AR_D)/mt19937ar.h
+SFMT_D = $(THIRDPARTY_D)/sfmt
+SFMT_OBJ = $(SFMT_D)/SFMT.o
+SFMT_H = $(addprefix $(SFMT_D)/, SFMT.h SFMT-common.h SFMT-params.h SFMT-params19937.h)
 
 CHAR_C = char.c HPMchar.c loginif.c mapif.c geoip.c inter.c int_achievement.c int_adventurer_agency.c \
          int_auction.c int_clan.c int_elemental.c int_guild.c int_homun.c int_mail.c int_mercenary.c \
@@ -65,7 +65,7 @@ CHAR_PH =
 
 HAVE_MYSQL=@HAVE_MYSQL@
 ifeq ($(HAVE_MYSQL),yes)
-	CHAR_SERVER_SQL_DEPENDS=$(CHAR_OBJ) $(COMMON_D)/obj_all/common.a $(COMMON_D)/obj_sql/common_sql.a $(MT19937AR_OBJ) $(LIBCONFIG_OBJ) $(LIBBACKTRACE_OBJ) $(SYSINFO_INC)
+	CHAR_SERVER_SQL_DEPENDS=$(CHAR_OBJ) $(COMMON_D)/obj_all/common.a $(COMMON_D)/obj_sql/common_sql.a $(SFMT_OBJ) $(LIBCONFIG_OBJ) $(LIBBACKTRACE_OBJ) $(SYSINFO_INC)
 else
 	CHAR_SERVER_SQL_DEPENDS=needs_mysql
 endif
@@ -104,7 +104,7 @@ help:
 Makefile: Makefile.in
 	@$(MAKE) -C ../.. src/char/Makefile
 
-$(SYSINFO_INC): $(CHAR_C) $(CHAR_PH) $(CHAR_H) $(COMMON_H) $(CONFIG_H) $(MT19937AR_H) $(LIBCONFIG_H) $(LIBBACKTRACE_H)
+$(SYSINFO_INC): $(CHAR_C) $(CHAR_PH) $(CHAR_H) $(COMMON_H) $(CONFIG_H) $(SFMT_H) $(LIBCONFIG_H) $(LIBBACKTRACE_H)
 	@echo "	MAKE	$@"
 	@$(MAKE) -C ../.. sysinfo
 
@@ -125,7 +125,7 @@ char-server: ../../char-server@EXEEXT@
 ../../char-server@EXEEXT@: $(CHAR_SERVER_SQL_DEPENDS) Makefile
 	@echo "	LD	$(notdir $@)"
 	@$(CC) @STATIC@ @LDFLAGS@ -o ../../char-server@EXEEXT@ $(CHAR_OBJ) $(COMMON_D)/obj_all/common.a $(COMMON_D)/obj_sql/common_sql.a \
-		$(MT19937AR_OBJ) $(LIBCONFIG_OBJ) $(LIBBACKTRACE_OBJ) @LIBS@ @MYSQL_LIBS@
+		$(SFMT_OBJ) $(LIBCONFIG_OBJ) $(LIBBACKTRACE_OBJ) @LIBS@ @MYSQL_LIBS@
 
 # missing object files
 $(COMMON_D)/obj_all/common.a:
@@ -136,9 +136,9 @@ $(COMMON_D)/obj_sql/common_sql.a:
 	@echo "	MAKE	$@"
 	@$(MAKE) -C $(COMMON_D) sql
 
-$(MT19937AR_OBJ):
+$(SFMT_OBJ):
 	@echo "	MAKE	$@"
-	@$(MAKE) -C $(MT19937AR_D)
+	@$(MAKE) -C $(SFMT_D)
 
 $(LIBCONFIG_OBJ):
 	@echo "	MAKE	$@"
@@ -152,6 +152,6 @@ $(LIBBACKTRACE_OBJ):
 
 # char object files
 
-obj_sql/%.o: %.c $$(filter %.p.h, $(CHAR_PH)) $(CHAR_H) $(COMMON_H) $(CONFIG_H) $(MT19937AR_H) $(LIBCONFIG_H) $(LIBBACKTRACE_H) | obj_sql
+obj_sql/%.o: %.c $$(filter %.p.h, $(CHAR_PH)) $(CHAR_H) $(COMMON_H) $(CONFIG_H) $(SFMT_H) $(LIBCONFIG_H) $(LIBBACKTRACE_H) | obj_sql
 	@echo "	CC	$<"
 	@$(CC) @CFLAGS@ @DEFS@ $(COMMON_INCLUDE) $(THIRDPARTY_INCLUDE) @MYSQL_CFLAGS@ @CPPFLAGS@ -c $(OUTPUT_OPTION) $<

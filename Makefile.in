@@ -25,12 +25,12 @@ HAVE_MYSQL=@HAVE_MYSQL@
 ifeq ($(HAVE_MYSQL),yes)
 	ALL_DEPENDS=common_sql login_sql char_sql map_sql api_sql sysinfo | import
 	SQL_DEPENDS=common_sql login_sql char_sql map_sql api_sql sysinfo | import
-	COMMON_SQL_DEPENDS=mt19937ar libconfig libbacktrace sysinfo
-	LOGIN_SQL_DEPENDS=mt19937ar libconfig libbacktrace common_sql sysinfo
-	CHAR_SQL_DEPENDS=mt19937ar libconfig libbacktrace common_sql sysinfo
-	MAP_SQL_DEPENDS=mt19937ar libconfig libbacktrace common_sql sysinfo
-	API_SQL_DEPENDS=mt19937ar libconfig libbacktrace common_sql sysinfo
-	TOOLS_DEPENDS=mt19937ar libconfig libbacktrace common_sql sysinfo
+	COMMON_SQL_DEPENDS=sfmt libconfig libbacktrace sysinfo
+	LOGIN_SQL_DEPENDS=sfmt libconfig libbacktrace common_sql sysinfo
+	CHAR_SQL_DEPENDS=sfmt libconfig libbacktrace common_sql sysinfo
+	MAP_SQL_DEPENDS=sfmt libconfig libbacktrace common_sql sysinfo
+	API_SQL_DEPENDS=sfmt libconfig libbacktrace common_sql sysinfo
+	TOOLS_DEPENDS=sfmt libconfig libbacktrace common_sql sysinfo
 else
 	ALL_DEPENDS=needs_mysql
 	SQL_DEPENDS=needs_mysql
@@ -53,7 +53,7 @@ endif
 HAVE_PERL=@HAVE_PERL@
 HAVE_DOXYGEN=@HAVE_DOXYGEN@
 
-MF_TARGETS = Makefile $(addsuffix /Makefile, src/common 3rdparty/mt19937ar \
+MF_TARGETS = Makefile $(addsuffix /Makefile, src/common 3rdparty/sfmt \
              3rdparty/libconfig 3rdparty/libbacktrace 3rdparty/multipart-parser \
              3rdparty/cJSON 3rdparty/libgif \
              src/char src/login src/map src/api src/plugins \
@@ -71,7 +71,7 @@ export CC
 #####################################################################
 .PHONY: sql  \
 	common_sql \
-	mt19937ar \
+	sfmt \
 	login_sql \
 	char_sql \
 	map_sql \
@@ -110,9 +110,9 @@ common_sql: $(COMMON_SQL_DEPENDS) src/common/Makefile
 	@echo "	MAKE	$@"
 	@$(MAKE) -C src/common sql
 
-mt19937ar: 3rdparty/mt19937ar/Makefile
+sfmt: 3rdparty/sfmt/Makefile
 	@echo "	MAKE	$@"
-	@$(MAKE) -C 3rdparty/mt19937ar
+	@$(MAKE) -C 3rdparty/sfmt
 
 libconfig: 3rdparty/libconfig/Makefile
 	@echo "	MAKE	$@"
@@ -188,7 +188,7 @@ import: Makefile
 clean buildclean: $(MF_TARGETS)
 	@$(MAKE) -C src/common $@
 	@$(MAKE) -C 3rdparty/cJSON $@
-	@$(MAKE) -C 3rdparty/mt19937ar $@
+	@$(MAKE) -C 3rdparty/sfmt $@
 	@$(MAKE) -C 3rdparty/libconfig $@
 	@$(MAKE) -C 3rdparty/libbacktrace $@
 	@$(MAKE) -C 3rdparty/libgif $@
@@ -224,7 +224,7 @@ help: Makefile
 	@echo "possible targets are:"
 	@echo "'common_sql'   - builds object files used in SQL servers"
 	@echo "'cJSON'        - builds object files of cJSON"
-	@echo "'mt19937ar'    - builds object file of Mersenne Twister MT19937"
+	@echo "'sfmt'         - builds object files of SFMT"
 	@echo "'libconfig'    - builds object files of libconfig"
 	@echo "'libbacktrace' - builds object files of libbacktrace"
 	@echo "'libgif'       - builds object files of libgif"

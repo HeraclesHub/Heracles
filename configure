@@ -2542,7 +2542,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 ac_config_files="$ac_config_files Makefile src/common/Makefile"
 
-ac_config_files="$ac_config_files 3rdparty/mt19937ar/Makefile 3rdparty/libconfig/Makefile 3rdparty/libbacktrace/Makefile 3rdparty/libbacktrace/backtrace-supported.h"
+ac_config_files="$ac_config_files 3rdparty/sfmt/Makefile 3rdparty/libconfig/Makefile 3rdparty/libbacktrace/Makefile 3rdparty/libbacktrace/backtrace-supported.h"
 
 ac_config_files="$ac_config_files 3rdparty/http-parser/Makefile 3rdparty/multipart-parser/Makefile 3rdparty/cJSON/Makefile 3rdparty/llhttp/Makefile 3rdparty/libgif/Makefile"
 
@@ -13790,7 +13790,7 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/common/Makefile") CONFIG_FILES="$CONFIG_FILES src/common/Makefile" ;;
-    "3rdparty/mt19937ar/Makefile") CONFIG_FILES="$CONFIG_FILES 3rdparty/mt19937ar/Makefile" ;;
+    "3rdparty/sfmt/Makefile") CONFIG_FILES="$CONFIG_FILES 3rdparty/sfmt/Makefile" ;;
     "3rdparty/libconfig/Makefile") CONFIG_FILES="$CONFIG_FILES 3rdparty/libconfig/Makefile" ;;
     "3rdparty/libbacktrace/Makefile") CONFIG_FILES="$CONFIG_FILES 3rdparty/libbacktrace/Makefile" ;;
     "3rdparty/libbacktrace/backtrace-supported.h") CONFIG_FILES="$CONFIG_FILES 3rdparty/libbacktrace/backtrace-supported.h" ;;
