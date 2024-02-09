@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2023 Hercules Dev Team
+ * Copyright (C) 2012-2024 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -11163,6 +11163,7 @@ static void clif_parse_LoadEndAck(int fd, struct map_session_data *sd)
 	}
 
 	if (sd->state.scloaded == 0) { // SC data was not received yet. pc->scdata_received will reinvoke
+		sd->state.loadendack_before_scloaded = 1;
 		return;
 	}
 

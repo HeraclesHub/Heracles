@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2023 Hercules Dev Team
+ * Copyright (C) 2012-2024 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -691,6 +691,8 @@ static int guild_recv_info(const struct guild *sg, struct fifo_chunk_buf *emblem
 		g->emblem_data = NULL;
 		g->emblem_len = 0;
 	} else {
+		if (!guild_new)
+			aFree(before.emblem_data);
 		g->emblem_data = aMalloc(emblem_buf->data_size);
 		memcpy(g->emblem_data, emblem_buf->data, emblem_buf->data_size);
 	}

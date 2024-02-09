@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2023 Hercules Dev Team
+ * Copyright (C) 2012-2024 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -210,6 +210,7 @@ struct map_session_data {
 	struct {
 		unsigned int active : 1; //Marks active player (not active is logging in/out, or changing map servers)
 		unsigned int scloaded : 1; // Marks sc related data has been loaded for player
+		unsigned int loadendack_before_scloaded : 1; // Marks that the LoadEndAck packet was received before scloaded
 		unsigned int menu_or_input : 1;// if a script is waiting for feedback from the player
 		unsigned int dead_sit : 2;
 		unsigned int lr_flag : 3;//1: left h. weapon; 2: arrow; 3: shield

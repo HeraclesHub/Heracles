@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2023 Hercules Dev Team
+ * Copyright (C) 2012-2024 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -12017,10 +12017,10 @@ static void pc_scdata_received(struct map_session_data *sd)
 		clif->pLoadEndAck(0,sd);
 		pc->autotrade_populate(sd);
 		pc->autotrade_start(sd);
-	} else {
+	} else if (sd->state.loadendack_before_scloaded != 0) {
 		clif->pLoadEndAck(sd->fd, sd);
+		sd->state.loadendack_before_scloaded = 0;
 	}
-	
 }
 static int pc_expiration_timer(int tid, int64 tick, int id, intptr_t data)
 {
@@ -12566,7 +12566,7 @@ static bool pc_expandInventory(struct map_session_data *sd, int adjustSize)
 {
 	nullpo_retr(false, sd);
 	const int invSize = sd->status.inventorySize;
-	if (adjustSize > MAX_INVENTORY || invSize + adjustSize <= FIXED_INVENTORY_SIZE || invSize + adjustSize > MAX_INVENTORY) {
+	if (adjustSize > MAX_INVENTORY || invSize + adjustSize < FIXED_INVENTORY_SIZE || invSize + adjustSize > MAX_INVENTORY) {
 		clif->inventoryExpandResult(sd, EXPAND_INVENTORY_RESULT_MAX_SIZE);
 		return false;
 	}
