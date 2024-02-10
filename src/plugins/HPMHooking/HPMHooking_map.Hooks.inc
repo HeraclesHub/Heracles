@@ -3236,15 +3236,15 @@ int64 HP_battle_calc_weapon_damage(struct block_list *src, struct block_list *bl
 	}
 	return retVal___;
 }
-int64 HP_battle_calc_defense(int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int pdef) {
+int64 HP_battle_calc_defense(int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int rdef) {
 	int hIndex = 0;
 	int64 retVal___ = 0;
 	if (HPMHooks.count.HP_battle_calc_defense_pre > 0) {
-		int64 (*preHookFunc) (int *attack_type, struct block_list **src, struct block_list **target, uint16 *skill_id, uint16 *skill_lv, int64 *damage, int *flag, int *pdef);
+		int64 (*preHookFunc) (int *attack_type, struct block_list **src, struct block_list **target, uint16 *skill_id, uint16 *skill_lv, int64 *damage, int *flag, int *rdef);
 		*HPMforce_return = false;
 		for (hIndex = 0; hIndex < HPMHooks.count.HP_battle_calc_defense_pre; hIndex++) {
 			preHookFunc = HPMHooks.list.HP_battle_calc_defense_pre[hIndex].func;
-			retVal___ = preHookFunc(&attack_type, &src, &target, &skill_id, &skill_lv, &damage, &flag, &pdef);
+			retVal___ = preHookFunc(&attack_type, &src, &target, &skill_id, &skill_lv, &damage, &flag, &rdef);
 		}
 		if (*HPMforce_return) {
 			*HPMforce_return = false;
@@ -3252,13 +3252,13 @@ int64 HP_battle_calc_defense(int attack_type, struct block_list *src, struct blo
 		}
 	}
 	{
-		retVal___ = HPMHooks.source.battle.calc_defense(attack_type, src, target, skill_id, skill_lv, damage, flag, pdef);
+		retVal___ = HPMHooks.source.battle.calc_defense(attack_type, src, target, skill_id, skill_lv, damage, flag, rdef);
 	}
 	if (HPMHooks.count.HP_battle_calc_defense_post > 0) {
-		int64 (*postHookFunc) (int64 retVal___, int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int pdef);
+		int64 (*postHookFunc) (int64 retVal___, int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int rdef);
 		for (hIndex = 0; hIndex < HPMHooks.count.HP_battle_calc_defense_post; hIndex++) {
 			postHookFunc = HPMHooks.list.HP_battle_calc_defense_post[hIndex].func;
-			retVal___ = postHookFunc(retVal___, attack_type, src, target, skill_id, skill_lv, damage, flag, pdef);
+			retVal___ = postHookFunc(retVal___, attack_type, src, target, skill_id, skill_lv, damage, flag, rdef);
 		}
 	}
 	return retVal___;

@@ -743,7 +743,7 @@ struct battle_interface {
 	/* get weapon damage */
 	int64 (*calc_weapon_damage) (struct block_list *src, struct block_list *bl, uint16 skill_id, uint16 skill_lv, struct weapon_atk *watk, int nk, bool n_ele, short s_ele, short s_ele_, int size, int type, int flag, int flag2);
 	/* applies defense reductions */
-	int64 (*calc_defense) (int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int pdef);
+	int64 (*calc_defense) (int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int rdef);
 	/* get master (who does this unit respond to?) */
 	struct block_list *(*get_master) (struct block_list *src);
 	/* returns a random unit who is targeting this unit */
