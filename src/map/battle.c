@@ -1397,11 +1397,11 @@ static int64 battle_calc_cardfix(int attack_type, struct block_list *src, struct
  * Calculates defense reduction. [malufett]
  * flag:
  * &1 - idef/imdef(Ignore defense)
- * &2 - pdef(Pierce defense)
+ * &2 - rdef(Reverses defense / defense increases damage)
  * &4 - tdef(Total defense reduction)
  *------------------------------------------*/
 // TODO: Add an enum for flag
-static int64 battle_calc_defense(int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int pdef)
+static int64 battle_calc_defense(int attack_type, struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int flag, int rdef)
 {
 	struct status_data *sstatus, *tstatus;
 	struct map_session_data *sd, *tsd;
@@ -1537,14 +1537,16 @@ static int64 battle_calc_defense(int attack_type, struct block_list *src, struct
 					damage = (int)((100.0f - def1 / (def1 + 400.0f) * 90.0f) / 100.0f * damage - vit_def);
 			}
 		#else
-				if( def1 > 100 ) def1 = 100;
-				if( !(flag&1) ){
-					if( flag&2 )
-						damage = damage * pdef * (def1+vit_def) / 100;
+				if (def1 > 100)
+					def1 = 100;
+
+				if (!(flag & 1)) {
+					if (flag & 2)
+						damage = damage * rdef * (def1 + vit_def) / 100;
 					else
-						damage = damage * (100-def1) / 100;
+						damage = damage * (100 - def1) / 100;
 				}
-				if( !(flag&1 || flag&2) )
+				if (!(flag&1 || flag&2))
 					damage -= vit_def;
 		#endif
 			}
@@ -4622,8 +4624,7 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 		unsigned cri : 1;    ///< Critical hit
 		unsigned idef : 1;   ///< Ignore defense
 		unsigned idef2 : 1;  ///< Ignore defense (left weapon)
-		unsigned pdef : 2;   ///< Pierces defense (Investigate/Ice Pick)
-		unsigned pdef2 : 2;  ///< 1: Use def+def2/100, 2: Use def+def2/50
+		unsigned rdef : 2;   ///< Reverses defense in damage calculation (Investigate/Ice Pick)
 		unsigned infdef : 1; ///< Infinite defense (plants)
 		unsigned arrow : 1;  ///< Attack is arrow-based
 		unsigned rh : 1;     ///< Attack considers right hand (wd.damage)
@@ -4756,7 +4757,7 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 
 			case MO_INVESTIGATE:
 			case RL_MASS_SPIRAL:
-				flag.pdef = flag.pdef2 = 2;
+				flag.rdef = 2;
 				break;
 
 			case RA_AIMEDBOLT:
@@ -5669,17 +5670,13 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 				 || sd->right_weapon.def_ratio_atk_race & map->race_id2mask(tstatus->race)
 				 || sd->right_weapon.def_ratio_atk_race & map->race_id2mask(is_boss(target) ? RC_BOSS : RC_NONBOSS)
 				)
-					flag.pdef = 1;
+					flag.rdef = 1;
 
 				if (sd->left_weapon.def_ratio_atk_ele & (1<<tstatus->def_ele)
 				 || sd->left_weapon.def_ratio_atk_race & map->race_id2mask(tstatus->race)
 				 || sd->left_weapon.def_ratio_atk_race & map->race_id2mask(is_boss(target) ? RC_BOSS : RC_NONBOSS)
 				) {
-					//Pass effect onto right hand if configured so. [Skotlex]
-					if (battle_config.left_cardfix_to_right && flag.rh)
-						flag.pdef = 1;
-					else
-						flag.pdef2 = 1;
+					flag.rdef = 1;
 				}
 			}
 
@@ -5697,7 +5694,7 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 					sd->left_weapon.ignore_def_race & map->race_id2mask(tstatus->race) ||
 					sd->left_weapon.ignore_def_race & map->race_id2mask(is_boss(target) ? RC_BOSS : RC_NONBOSS)
 				)) {
-						if(battle_config.left_cardfix_to_right && flag.rh) //Move effect to right hand. [Skotlex]
+						if (battle_config.left_cardfix_to_right && flag.rh) //Move effect to right hand. [Skotlex]
 							flag.idef = 1;
 						else
 							flag.idef2 = 1;
@@ -5714,18 +5711,18 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 #endif
 			) { //Defense reduction
 			wd.damage = battle->calc_defense(BF_WEAPON, src, target, skill_id, skill_lv, wd.damage,
-											 (flag.idef?1:0)|(flag.pdef?2:0)
+											 (flag.idef ? 1 : 0) | (flag.rdef ? 2 : 0)
 #ifdef RENEWAL
 											 |(flag.tdef?4:0)
 #endif
-											 , flag.pdef);
+											 , flag.rdef);
 			if( wd.damage2 )
 				wd.damage2 = battle->calc_defense(BF_WEAPON, src, target, skill_id, skill_lv, wd.damage2,
-												  (flag.idef2?1:0)|(flag.pdef2?2:0)
+												  (flag.idef2 ? 1 : 0) | (flag.rdef ? 2 : 0)
 #ifdef RENEWAL
 												  |(flag.tdef?4:0)
 #endif
-												  , flag.pdef2);
+												  , flag.rdef);
 		}
 
 #ifdef RENEWAL
@@ -5801,7 +5798,7 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 
 #ifndef RENEWAL
 		wd.damage = battle->calc_masteryfix(src, target, skill_id, skill_lv, wd.damage, wd.div_, 0, flag.weapon);
-		if( flag.lh )
+		if (flag.lh)
 			wd.damage2 = battle->calc_masteryfix(src, target, skill_id, skill_lv, wd.damage2, wd.div_, 1, flag.weapon);
 #else
 		if( sd && flag.cri )
@@ -5856,7 +5853,7 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 		//Card Fix, sd side
 
 		wd.damage = battle->calc_cardfix(BF_WEAPON, src, target, nk, s_ele, s_ele_, wd.damage, 2, wd.flag);
-		if( flag.lh )
+		if (flag.lh && (!flag.rh || !battle_config.left_cardfix_to_right)) // Cards don't affect offhand when dual-wielding
 			wd.damage2 = battle->calc_cardfix(BF_WEAPON, src, target, nk, s_ele, s_ele_, wd.damage2, 3, wd.flag);
 
 		if( skill_id == CR_SHIELDBOOMERANG || skill_id == PA_SHIELDCHAIN )
