@@ -3020,6 +3020,33 @@ int64 HP_battle_attr_fix(struct block_list *src, struct block_list *target, int6
 	}
 	return retVal___;
 }
+short HP_battle_calc_flee(struct block_list *target) {
+	int hIndex = 0;
+	short retVal___ = 0;
+	if (HPMHooks.count.HP_battle_calc_flee_pre > 0) {
+		short (*preHookFunc) (struct block_list **target);
+		*HPMforce_return = false;
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_battle_calc_flee_pre; hIndex++) {
+			preHookFunc = HPMHooks.list.HP_battle_calc_flee_pre[hIndex].func;
+			retVal___ = preHookFunc(&target);
+		}
+		if (*HPMforce_return) {
+			*HPMforce_return = false;
+			return retVal___;
+		}
+	}
+	{
+		retVal___ = HPMHooks.source.battle.calc_flee(target);
+	}
+	if (HPMHooks.count.HP_battle_calc_flee_post > 0) {
+		short (*postHookFunc) (short retVal___, struct block_list *target);
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_battle_calc_flee_post; hIndex++) {
+			postHookFunc = HPMHooks.list.HP_battle_calc_flee_post[hIndex].func;
+			retVal___ = postHookFunc(retVal___, target);
+		}
+	}
+	return retVal___;
+}
 int64 HP_battle_calc_cardfix(int attack_type, struct block_list *src, struct block_list *target, int nk, int s_ele, int s_ele_, int64 damage, int left, int flag) {
 	int hIndex = 0;
 	int64 retVal___ = 0;
