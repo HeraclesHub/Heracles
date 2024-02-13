@@ -482,6 +482,8 @@ typedef int (*HPMHOOK_pre_battle_attr_ratio) (int *atk_elem, int *def_type, int 
 typedef int (*HPMHOOK_post_battle_attr_ratio) (int retVal___, int atk_elem, int def_type, int def_lv);
 typedef int64 (*HPMHOOK_pre_battle_attr_fix) (struct block_list **src, struct block_list **target, int64 *damage, int *atk_elem, int *def_type, int *def_lv);
 typedef int64 (*HPMHOOK_post_battle_attr_fix) (int64 retVal___, struct block_list *src, struct block_list *target, int64 damage, int atk_elem, int def_type, int def_lv);
+typedef short (*HPMHOOK_pre_battle_calc_flee) (struct block_list **target);
+typedef short (*HPMHOOK_post_battle_calc_flee) (short retVal___, struct block_list *target);
 typedef int64 (*HPMHOOK_pre_battle_calc_cardfix) (int *attack_type, struct block_list **src, struct block_list **target, int *nk, int *s_ele, int *s_ele_, int64 *damage, int *left, int *flag);
 typedef int64 (*HPMHOOK_post_battle_calc_cardfix) (int64 retVal___, int attack_type, struct block_list *src, struct block_list *target, int nk, int s_ele, int s_ele_, int64 damage, int left, int flag);
 typedef int64 (*HPMHOOK_pre_battle_calc_cardfix2) (struct block_list **src, struct block_list **bl, int64 *damage, int *s_ele, int *nk, int *flag);

@@ -482,6 +482,37 @@ static int64 battle_attr_fix(struct block_list *src, struct block_list *target, 
 		return damage + (damage * (ratio - 100) / 100);
 }
 
+/**
+ * Gets flee of target after penalties
+ * 
+ * @param target Target unit
+ * @return Final flee of unit
+ */
+static short battle_calc_flee(struct block_list *target) {
+	struct status_data *tstatus = status->get_status_data(target);
+	short flee = tstatus->flee;
+
+	if (battle_config.agi_penalty_type != 0 && (battle_config.agi_penalty_target & target->type) != 0) {
+		int attacker_count = unit->counttargeted(target);
+
+		if (attacker_count >= battle_config.agi_penalty_count) {
+			// Cap to max number of attackers if specified
+			if (battle_config.agi_penalty_max_count > 0)
+				attacker_count = cap_value(attacker_count, 0, battle_config.agi_penalty_max_count);
+
+			int penalty = (attacker_count - (battle_config.agi_penalty_count - 1)) * battle_config.agi_penalty_num;
+			if (battle_config.agi_penalty_type == 1)
+				flee = flee * (100 - penalty) / 100;
+			else // asume type 2: absolute reduction
+				flee -= penalty;
+			if (flee < 1)
+				flee = 1;
+		}
+	}
+
+	return flee;
+}
+
 // [malufett]
 //FIXME: Missing documentation for flag, flag2
 static int64 battle_calc_weapon_damage(struct block_list *src, struct block_list *bl, uint16 skill_id, uint16 skill_lv, struct weapon_atk *watk, int nk, bool n_ele, short s_ele, short s_ele_, int size, int type, int flag, int flag2)
@@ -1463,7 +1494,12 @@ static int64 battle_calc_defense(int attack_type, struct block_list *src, struct
 
 			if (battle_config.vit_penalty_type != 0 && (battle_config.vit_penalty_target & target->type) != 0) {
 				int target_count = unit->counttargeted(target);
+
 				if (target_count >= battle_config.vit_penalty_count) {
+					// Cap to max number of attackers if specified
+					if (battle_config.vit_penalty_max_count > 0)
+						target_count = cap_value(target_count, 0 ,battle_config.vit_penalty_count);
+
 					int penalty = (target_count - (battle_config.vit_penalty_count - 1)) * battle_config.vit_penalty_num;
 					if (battle_config.vit_penalty_type == 1) {
 						if (tsc == NULL || tsc->data[SC_STEELBODY] == NULL)
@@ -4463,28 +4499,14 @@ static struct Damage battle_calc_misc_attack(struct block_list *src, struct bloc
 		if(tsc && tsc->opt1 && tsc->opt1 != OPT1_STONEWAIT && tsc->opt1 != OPT1_BURNING)
 			hit = true;
 		else {
-			short
-				flee = tstatus->flee,
+			short flee = battle->calc_flee(target);
 #ifdef RENEWAL
-				hitrate = 0; //Default hitrate
+			short hitrate = 0; //Default hitrate
 #else
-				hitrate = 80; //Default hitrate
+			short hitrate = 80; //Default hitrate
 #endif
 
-			if (battle_config.agi_penalty_type != 0 && (battle_config.agi_penalty_target & target->type) != 0) {
-				int attacker_count = unit->counttargeted(target);
-				if (attacker_count >= battle_config.agi_penalty_count) {
-					int penalty = (attacker_count - (battle_config.agi_penalty_count - 1)) * battle_config.agi_penalty_num;
-					if (battle_config.agi_penalty_type == 1)
-						flee = flee * (100 - penalty) / 100;
-					else // assume type 2: absolute reduction
-						flee -= penalty;
-					if (flee < 1)
-						flee = 1;
-				}
-			}
-
-			hitrate+= sstatus->hit - flee;
+			hitrate += sstatus->hit - flee;
 #ifdef RENEWAL
 			if( sd ) //in Renewal hit bonus from Vultures Eye is not anymore shown in status window
 				hitrate += pc->checkskill(sd,AC_VULTURE);
@@ -5018,27 +5040,13 @@ static struct Damage battle_calc_weapon_attack(struct block_list *src, struct bl
 
 	if (!flag.hit) {
 		//Hit/Flee calculation
-		short flee = tstatus->flee;
+		short flee = battle->calc_flee(target);
 #ifdef RENEWAL
 		short hitrate = 0; //Default hitrate
 #else
 		short hitrate = 80; //Default hitrate
 #endif
-
-		if (battle_config.agi_penalty_type != 0 && (battle_config.agi_penalty_target & target->type) != 0) {
-			int attacker_count = unit->counttargeted(target);
-			if (attacker_count >= battle_config.agi_penalty_count) {
-				int penalty = (attacker_count - (battle_config.agi_penalty_count - 1)) * battle_config.agi_penalty_num;
-				if (battle_config.agi_penalty_type == 1)
-					flee = flee * (100 - penalty) / 100;
-				else // asume type 2: absolute reduction
-					flee -= penalty;
-				if (flee < 1)
-					flee = 1;
-			}
-		}
-
-		hitrate+= sstatus->hit - flee;
+		hitrate += sstatus->hit - flee;
 
 		if(wd.flag&BF_LONG && !skill_id && //Fogwall's hit penalty is only for normal ranged attacks.
 			tsc && tsc->data[SC_FOGWALL])
@@ -7562,10 +7570,12 @@ static const struct config_data_old battle_data[] = {
 	{ "agi_penalty_target",                 &battle_config.agi_penalty_target,              BL_PC,  BL_NUL, BL_ALL,         },
 	{ "agi_penalty_type",                   &battle_config.agi_penalty_type,                1,      0,      2,              },
 	{ "agi_penalty_count",                  &battle_config.agi_penalty_count,               3,      2,      INT_MAX,        },
+	{ "agi_penalty_max_count",              &battle_config.agi_penalty_max_count,           12,     0,      INT_MAX,        },
 	{ "agi_penalty_num",                    &battle_config.agi_penalty_num,                 10,     0,      INT_MAX,        },
 	{ "vit_penalty_target",                 &battle_config.vit_penalty_target,              BL_PC,  BL_NUL, BL_ALL,         },
 	{ "vit_penalty_type",                   &battle_config.vit_penalty_type,                1,      0,      2,              },
 	{ "vit_penalty_count",                  &battle_config.vit_penalty_count,               3,      2,      INT_MAX,        },
+	{ "vit_penalty_max_count",              &battle_config.vit_penalty_max_count,           20,     0,      INT_MAX,        },
 	{ "vit_penalty_num",                    &battle_config.vit_penalty_num,                 5,      0,      INT_MAX,        },
 	{ "weapon_defense_type",                &battle_config.weapon_defense_type,             0,      0,      INT_MAX,        },
 	{ "magic_defense_type",                 &battle_config.magic_defense_type,              0,      0,      INT_MAX,        },
@@ -8207,6 +8217,7 @@ void battle_defaults(void)
 	battle->reflect_trap = battle_reflect_trap;
 	battle->attr_ratio = battle_attr_ratio;
 	battle->attr_fix = battle_attr_fix;
+	battle->calc_flee = battle_calc_flee;
 	battle->calc_cardfix = battle_calc_cardfix;
 	battle->calc_cardfix2 = battle_calc_cardfix2;
 	battle->calc_elefix = battle_calc_elefix;

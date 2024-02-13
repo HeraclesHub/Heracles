@@ -271,10 +271,12 @@ struct Battle_Config {
 	int agi_penalty_target;
 	int agi_penalty_type;
 	int agi_penalty_count;
+	int agi_penalty_max_count;
 	int agi_penalty_num;
 	int vit_penalty_target;
 	int vit_penalty_type;
 	int vit_penalty_count;
+	int vit_penalty_max_count;
 	int vit_penalty_num;
 	int weapon_defense_type;
 	int magic_defense_type;
@@ -727,6 +729,8 @@ struct battle_interface {
 	int (*attr_ratio) (int atk_elem, int def_type, int def_lv);
 	/* applies attribute modifiers */
 	int64 (*attr_fix) (struct block_list *src, struct block_list *target, int64 damage, int atk_elem, int def_type, int def_lv);
+	/* Gets flee of target after penalties */
+	short (*calc_flee) (struct block_list *target);
 	/* applies card modifiers */
 	int64 (*calc_cardfix) (int attack_type, struct block_list *src, struct block_list *target, int nk, int s_ele, int s_ele_, int64 damage, int left, int flag);
 	int64 (*calc_cardfix2) (struct block_list *src, struct block_list *bl, int64 damage, int s_ele, int nk, int flag);
