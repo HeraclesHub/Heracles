@@ -3220,6 +3220,10 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 
 	dmg = battle->calc_attack(attack_type,src,bl,skill_id,skill_lv,flag&0xFFF);
 
+	// If the damage source is a unit, the damage is not delayed
+	if (src != dsrc && skill_id != GS_GROUNDDRIFT)
+		dmg.amotion = 0;
+
 	//Skotlex: Adjusted to the new system
 	if (src->type == BL_PET) { // [Valaris]
 		struct pet_data *pd = BL_UCAST(BL_PET, src);
