@@ -526,7 +526,7 @@ static int unit_walk_toxy_timer(int tid, int64 tick, int id, intptr_t data)
 				unit->attack(bl, tbl->id, ud->state.attack_continue);
 			}
 		} else { // Update chase-path
-			unit->walk_tobl(bl, tbl, ud->chaserange, ud->state.walk_easy | ud->state.attack_continue);
+			unit->walk_tobl(bl, tbl, ud->chaserange, ud->state.walk_easy | (ud->state.attack_continue ? 2 : 0));
 			return 0;
 		}
 	} else {
@@ -1389,7 +1389,7 @@ static int unit_set_walkdelay(struct block_list *bl, int64 tick, int delay, int 
 		//Stop walking, if chasing, readjust timers.
 		if (delay == 1) {
 			//Minimal delay (walk-delay) disabled. Just stop walking.
-			unit->stop_walking(bl, STOPWALKING_FLAG_NEXTCELL);
+			unit->stop_walking(bl, STOPWALKING_FLAG_NONE);
 		} else {
 			//Resume running after can move again [Kevin]
 			if (ud->state.running) {

@@ -3945,10 +3945,10 @@ static struct Damage battle_calc_magic_attack(struct block_list *src, struct blo
 		case MG_FIREWALL:
 			if ( tstatus->def_ele == ELE_FIRE || battle->check_undead(tstatus->race, tstatus->def_ele) )
 				ad.blewcount = 0; //No knockback
-			break;
+			FALLTHROUGH;
 		case NJ_KAENSIN:
 		case PR_SANCTUARY:
-			ad.dmotion = 0; //No flinch animation.
+			ad.dmotion = 1; //No flinch animation.
 			break;
 		case WL_HELLINFERNO:
 			if( mflag&ELE_DARK )
