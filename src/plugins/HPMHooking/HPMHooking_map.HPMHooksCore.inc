@@ -7520,8 +7520,6 @@ struct {
 	struct HPMHookPoint *HP_unit_can_move_post;
 	struct HPMHookPoint *HP_unit_resume_running_pre;
 	struct HPMHookPoint *HP_unit_resume_running_post;
-	struct HPMHookPoint *HP_unit_set_walkdelay_timer_pre;
-	struct HPMHookPoint *HP_unit_set_walkdelay_timer_post;
 	struct HPMHookPoint *HP_unit_set_walkdelay_pre;
 	struct HPMHookPoint *HP_unit_set_walkdelay_post;
 	struct HPMHookPoint *HP_unit_skilluse_id2_pre;
@@ -15079,8 +15077,6 @@ struct {
 	int HP_unit_can_move_post;
 	int HP_unit_resume_running_pre;
 	int HP_unit_resume_running_post;
-	int HP_unit_set_walkdelay_timer_pre;
-	int HP_unit_set_walkdelay_timer_post;
 	int HP_unit_set_walkdelay_pre;
 	int HP_unit_set_walkdelay_post;
 	int HP_unit_skilluse_id2_pre;
