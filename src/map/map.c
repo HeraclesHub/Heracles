@@ -4585,7 +4585,7 @@ static bool inter_config_read_database_names(const char *filename, const struct 
 
 /**
  * Looks up configuration "name" which is expect to have a final value of int, but may be specified by a string constant.
- * 
+ *
  * If the config is a string, it will be looked up using script->get_constant function to find the actual integer value.
  *
  * @param[in]  setting        The setting to read.
@@ -4616,7 +4616,7 @@ static bool map_setting_lookup_const(const struct config_setting_t *setting, con
 /**
  * Looks up configuration "name" which is expect to have a final value of int,
  * but may be specified by a string constant or an array of bitflag constants.
- * 
+ *
  * If the config is a string, it will be looked up using script->get_constant function to find the actual integer value.
  * If the config is an array, each value will be read and added to the final bitmask.
  *
