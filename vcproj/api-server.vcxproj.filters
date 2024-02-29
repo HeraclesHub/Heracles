@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\3rdparty\mt19937ar\mt19937ar.c">
-      <Filter>3rdparty\mt19937ar</Filter>
+    <ClCompile Include="..\3rdparty\sfmt\SFMT.c">
+      <Filter>3rdparty\sfmt</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\libconfig\grammar.c">
       <Filter>3rdparty\libconfig</Filter>
@@ -115,8 +115,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\3rdparty\mt19937ar\mt19937ar.h">
-      <Filter>3rdparty\mt19937ar</Filter>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-common.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params.h">
+      <Filter>3rdparty\sfmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params19937.h">
+      <Filter>3rdparty\sfmt</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\libconfig\grammar.h">
       <Filter>3rdparty\libconfig</Filter>
@@ -333,7 +342,7 @@
     <Filter Include="3rdparty">
       <UniqueIdentifier>{f9b907f8-9f2a-499c-99af-278cc0c7c970}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdparty\mt19937ar">
+    <Filter Include="3rdparty\sfmt">
       <UniqueIdentifier>{58098aa7-fdb6-417d-a158-7b31bfafea85}</UniqueIdentifier>
     </Filter>
     <Filter Include="3rdparty\libconfig">

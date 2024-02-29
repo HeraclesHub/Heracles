@@ -147,7 +147,10 @@
     <ClInclude Include="..\3rdparty\libgif\gif_hash.h" />
     <ClInclude Include="..\3rdparty\libgif\gif_lib_private.h" />
     <ClInclude Include="..\3rdparty\libgif\gif_lib.h" />
-    <ClInclude Include="..\3rdparty\mt19937ar\mt19937ar.h" />
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-common.h" />
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params.h" />
+    <ClInclude Include="..\3rdparty\sfmt\SFMT-params19937.h" />
+    <ClInclude Include="..\3rdparty\sfmt\SFMT.h" />
     <ClInclude Include="..\3rdparty\multipart-parser\multipartparser.h" />
     <ClInclude Include="..\src\api\aclif.h" />
     <ClInclude Include="..\src\api\aloginif.h" />
@@ -222,7 +225,7 @@
     <ClCompile Include="..\3rdparty\libgif\gif_hash.c" />
     <ClCompile Include="..\3rdparty\libgif\gifalloc.c" />
     <ClCompile Include="..\3rdparty\libgif\openbsd-reallocarray.c" />
-    <ClCompile Include="..\3rdparty\mt19937ar\mt19937ar.c" />
+    <ClCompile Include="..\3rdparty\sfmt\SFMT.c" />
     <ClCompile Include="..\3rdparty\multipart-parser\multipartparser.c" />
     <ClCompile Include="..\src\api\aclif.c" />
     <ClCompile Include="..\src\api\aloginif.c" />
