@@ -2065,6 +2065,7 @@ struct skill_interface {
 	int area_temp[8];
 	int unit_temp[20];  // temporary storage for tracking skill unit skill ids as players move in/out of them
 	int unit_group_newid;
+	int unit_timer_tid;
 	/* accesssors */
 	int (*get_index) (int skill_id);
 	int (*get_type) (int skill_id, int skill_lv);

@@ -18898,6 +18898,7 @@ static struct skill_unit_group *skill_initunitgroup(struct block_list *src, int 
 	if(!(skill_id && skill_lv)) return 0;
 
 	nullpo_retr(NULL, src);
+	Assert_retr(NULL, skill->unit_timer_tid != 0);
 
 	struct unit_data *ud;
 
@@ -18945,7 +18946,7 @@ static struct skill_unit_group *skill_initunitgroup(struct block_list *src, int 
 	group->map         = src->m;
 	group->limit       = limit;
 	group->interval    = interval;
-	group->tick        = timer->gettick();
+	group->tick        = timer->get(skill->unit_timer_tid)->tick;
 	group->valstr      = NULL;
 
 	ud->skillunit[i] = group;
@@ -25138,7 +25139,7 @@ static int do_init_skill(bool minimal)
 	timer->add_func_list(skill->timerskill,"skill_timerskill");
 	timer->add_func_list(skill->blockpc_end, "skill_blockpc_end");
 
-	timer->add_interval(timer->gettick()+SKILLUNITTIMER_INTERVAL,skill->unit_timer,0,0,SKILLUNITTIMER_INTERVAL);
+	skill->unit_timer_tid = timer->add_interval(timer->gettick() + SKILLUNITTIMER_INTERVAL, skill->unit_timer, 0, 0, SKILLUNITTIMER_INTERVAL);
 
 	return 0;
 }
@@ -25197,6 +25198,7 @@ void skill_defaults(void)
 	memset(&skill->area_temp,0,sizeof(skill->area_temp));
 	memset(&skill->unit_temp,0,sizeof(skill->unit_temp));
 	skill->unit_group_newid = 0;
+	skill->unit_timer_tid = 0;
 	/* accessors */
 	skill->get_index = skill_get_index;
 	skill->get_type = skill_get_type;
