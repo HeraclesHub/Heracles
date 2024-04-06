@@ -10449,9 +10449,11 @@ static int skill_castend_nodamage_id(struct block_list *src, struct block_list *
 			}
 			break;
 		case SC_AUTOSHADOWSPELL:
-			if( sd ) {
-				int idx1 = skill->get_index(sd->reproduceskill_id), idx2 = skill->get_index(sd->cloneskill_id);
-				if( sd->status.skill[idx1].id || sd->status.skill[idx2].id ) {
+			if (sd) {
+				int idx1 = sd->reproduceskill_id != 0 ? skill->get_index(sd->reproduceskill_id) : 0;
+				int idx2 = sd->cloneskill_id != 0 ? skill->get_index(sd->cloneskill_id) : 0;
+
+				if ((idx1 != 0 && sd->status.skill[idx1].id) || (idx2 != 0 && sd->status.skill[idx2].id)) {
 					sc_start(src, src, SC_STOP, 100, skill_lv, INFINITE_DURATION, skill_id); // The skill_lv is stored in val1 used in skill_select_menu to determine the used skill lvl [Xazax]
 					clif->autoshadowspell_list(sd);
 					clif->skill_nodamage(src,bl,skill_id,1,1);
