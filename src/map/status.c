@@ -2395,8 +2395,12 @@ static int status_calc_pc_(struct map_session_data *sd, enum e_status_calc_opt o
 		// Client doesn't delete unavailable skills even if we refresh
 		// the skill tree, individually delete them.
 		for (i = 0; i < MAX_SKILL_DB; i++) {
-			if (b_skill[i].id != 0 && sd->status.skill[i].id == 0)
+			if (b_skill[i].id != 0 && sd->status.skill[i].id == 0) {
 				clif->deleteskill(sd, b_skill[i].id, true);
+				// Skills that belong to the skill tree need to be "downgraded"
+				if (pc->isownskill(sd, b_skill[i].id))
+					clif->skillup(sd, b_skill[i].id, 0, 1);
+			}
 		}
 #endif
 		clif->skillinfoblock(sd);

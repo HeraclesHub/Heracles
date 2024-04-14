@@ -2653,6 +2653,7 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(pc->maxparameterincrease, HP_pc_maxparameterincrease) },
 	{ HP_POP(pc->statusup, HP_pc_statusup) },
 	{ HP_POP(pc->statusup2, HP_pc_statusup2) },
+	{ HP_POP(pc->isownskill, HP_pc_isownskill) },
 	{ HP_POP(pc->skillup, HP_pc_skillup) },
 	{ HP_POP(pc->allskillup, HP_pc_allskillup) },
 	{ HP_POP(pc->resetlvl, HP_pc_resetlvl) },

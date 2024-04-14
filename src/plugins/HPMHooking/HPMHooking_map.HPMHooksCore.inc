@@ -5176,6 +5176,8 @@ struct {
 	struct HPMHookPoint *HP_pc_statusup_post;
 	struct HPMHookPoint *HP_pc_statusup2_pre;
 	struct HPMHookPoint *HP_pc_statusup2_post;
+	struct HPMHookPoint *HP_pc_isownskill_pre;
+	struct HPMHookPoint *HP_pc_isownskill_post;
 	struct HPMHookPoint *HP_pc_skillup_pre;
 	struct HPMHookPoint *HP_pc_skillup_post;
 	struct HPMHookPoint *HP_pc_allskillup_pre;
@@ -12733,6 +12735,8 @@ struct {
 	int HP_pc_statusup_post;
 	int HP_pc_statusup2_pre;
 	int HP_pc_statusup2_post;
+	int HP_pc_isownskill_pre;
+	int HP_pc_isownskill_post;
 	int HP_pc_skillup_pre;
 	int HP_pc_skillup_post;
 	int HP_pc_allskillup_pre;

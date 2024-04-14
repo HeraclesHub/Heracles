@@ -5729,8 +5729,15 @@ static void clif_skillup(struct map_session_data *sd, uint16 skill_id, int skill
 	WFIFOW(fd, 0) = 0x10e;
 	WFIFOW(fd, 2) = skill_id;
 	WFIFOW(fd, 4) = skill_lv;
-	WFIFOW(fd, 6) = skill->get_sp(skill_id, skill_lv);
-	WFIFOW(fd, 8) = (flag)?skill->get_range2(&sd->bl, skill_id, skill_lv) : skill->get_range(skill_id, skill_lv);
+
+	if (skill_lv > 0) {
+		WFIFOW(fd, 6) = skill->get_sp(skill_id, skill_lv);
+		WFIFOW(fd, 8) = (flag)?skill->get_range2(&sd->bl, skill_id, skill_lv) : skill->get_range(skill_id, skill_lv);
+	} else {
+		WFIFOW(fd, 6) = 0;
+		WFIFOW(fd, 8) = 0;
+	}
+
 	if( flag )
 		WFIFOB(fd,10) = (skill_lv < skill->tree_get_max(skill_id, sd->status.class)) ? 1 : 0;
 	else

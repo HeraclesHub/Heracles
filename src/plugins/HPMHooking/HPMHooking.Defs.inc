@@ -7198,6 +7198,8 @@ typedef bool (*HPMHOOK_pre_pc_statusup) (struct map_session_data **sd, int *type
 typedef bool (*HPMHOOK_post_pc_statusup) (bool retVal___, struct map_session_data *sd, int type, int increase);
 typedef int (*HPMHOOK_pre_pc_statusup2) (struct map_session_data **sd, int *type, int *val);
 typedef int (*HPMHOOK_post_pc_statusup2) (int retVal___, struct map_session_data *sd, int type, int val);
+typedef bool (*HPMHOOK_pre_pc_isownskill) (struct map_session_data **sd, uint16 *skill_id);
+typedef bool (*HPMHOOK_post_pc_isownskill) (bool retVal___, struct map_session_data *sd, uint16 skill_id);
 typedef int (*HPMHOOK_pre_pc_skillup) (struct map_session_data **sd, uint16 *skill_id);
 typedef int (*HPMHOOK_post_pc_skillup) (int retVal___, struct map_session_data *sd, uint16 skill_id);
 typedef int (*HPMHOOK_pre_pc_allskillup) (struct map_session_data **sd);
