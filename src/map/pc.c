@@ -1481,7 +1481,7 @@ static int pc_set_hate_mob(struct map_session_data *sd, int pos, struct block_li
  *------------------------------------------*/
 static int pc_reg_received(struct map_session_data *sd)
 {
-	int i, idx = 0;
+	int i, idx = 0, knownlv = 0;
 
 	nullpo_ret(sd);
 	sd->vars_ok = true;
@@ -1520,21 +1520,31 @@ static int pc_reg_received(struct map_session_data *sd)
 	if ((i = pc->checkskill(sd,RG_PLAGIARISM)) > 0) {
 		sd->cloneskill_id = pc_readglobalreg(sd,script->add_variable("CLONE_SKILL"));
 		if (sd->cloneskill_id > 0 && (idx = skill->get_index(sd->cloneskill_id)) > 0) {
+			knownlv = sd->status.skill[idx].lv;
 			sd->status.skill[idx].id = sd->cloneskill_id;
 			sd->status.skill[idx].lv = pc_readglobalreg(sd,script->add_variable("CLONE_SKILL_LV"));
 			if (sd->status.skill[idx].lv > i)
 				sd->status.skill[idx].lv = i;
-			sd->status.skill[idx].flag = SKILL_FLAG_PLAGIARIZED;
+
+			if (knownlv > 0 && sd->status.skill[idx].flag == SKILL_FLAG_PERMANENT)
+				sd->status.skill[idx].flag = knownlv + SKILL_FLAG_REPLACED_LV_0;
+			else 
+				sd->status.skill[idx].flag = SKILL_FLAG_PLAGIARIZED;
 		}
 	}
 	if ((i = pc->checkskill(sd,SC_REPRODUCE)) > 0) {
 		sd->reproduceskill_id = pc_readglobalreg(sd,script->add_variable("REPRODUCE_SKILL"));
 		if( sd->reproduceskill_id > 0 && (idx = skill->get_index(sd->reproduceskill_id)) > 0) {
+			knownlv = sd->status.skill[idx].lv;
 			sd->status.skill[idx].id = sd->reproduceskill_id;
 			sd->status.skill[idx].lv = pc_readglobalreg(sd,script->add_variable("REPRODUCE_SKILL_LV"));
-			if( i < sd->status.skill[idx].lv)
+			if (sd->status.skill[idx].lv > i)
 				sd->status.skill[idx].lv = i;
-			sd->status.skill[idx].flag = SKILL_FLAG_PLAGIARIZED;
+
+			if (knownlv > 0 && sd->status.skill[idx].flag == SKILL_FLAG_PERMANENT)
+				sd->status.skill[idx].flag = knownlv + SKILL_FLAG_REPLACED_LV_0;
+			else
+				sd->status.skill[idx].flag = SKILL_FLAG_PLAGIARIZED;
 		}
 	}
 
@@ -1644,8 +1654,22 @@ static void pc_calc_skilltree_clear(struct map_session_data *sd)
 	nullpo_retv(sd);
 
 	for (i = 0; i < MAX_SKILL_DB; i++) {
-		if (sd->status.skill[i].flag != SKILL_FLAG_PLAGIARIZED && sd->status.skill[i].flag != SKILL_FLAG_PERM_GRANTED) //Don't touch these
-			sd->status.skill[i].id = 0; //First clear skills.
+		// Don't touch these
+		if (sd->status.skill[i].flag == SKILL_FLAG_PLAGIARIZED
+			|| sd->status.skill[i].flag == SKILL_FLAG_PERM_GRANTED
+			|| (sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0
+				&& (sd->status.skill[i].id == sd->cloneskill_id || sd->status.skill[i].id == sd->reproduceskill_id))
+			)
+			continue;
+
+		sd->status.skill[i].id = 0; //First clear skills.
+
+		if (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY || sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0) { // Plagiarized skills were already ignored
+			// Restore original level of skills after deleting earned skills.
+			sd->status.skill[i].lv = (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY) ? 0 : sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
+			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
+		}
+
 		/* permanent skills that must be re-checked */
 		if (sd->status.skill[i].flag == SKILL_FLAG_PERMANENT) {
 			switch (skill->dbs->db[i].nameid) {
@@ -1677,14 +1701,6 @@ static int pc_calc_skilltree(struct map_session_data *sd)
 	int classidx = pc->class2idx(class);
 
 	pc->calc_skilltree_clear(sd);
-
-	for (int i = 0; i < MAX_SKILL_DB; i++) {
-		if (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY || sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0) {
-			// Restore original level of skills after deleting earned skills.
-			sd->status.skill[i].lv = (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY) ? 0 : sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
-			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
-		}
-	}
 
 	//Enable Bard/Dancer spirit linked skills.
 	skill->add_bard_dancer_soullink_songs(sd);
@@ -1905,7 +1921,7 @@ static int pc_clean_skilltree(struct map_session_data *sd)
 			sd->status.skill[i].flag = 0;
 		} else if (sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0) {
 			sd->status.skill[i].lv = sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
-			sd->status.skill[i].flag = 0;
+			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
 		}
 	}
 
@@ -7277,6 +7293,21 @@ static int pc_statusup2(struct map_session_data *sd, int type, int val)
 		clif->updatestatus(sd,type); // send after the 'ack' to override the truncated value
 
 	return val;
+}
+
+/**
+ * Check skill_id is part of character's own skill tree
+ */
+static bool pc_isownskill(struct map_session_data *sd, uint16 skill_id)
+{
+	nullpo_ret(sd);
+
+	int class_idx = pc->class2idx(sd->status.class);
+	int i;
+
+	ARR_FIND(0, MAX_SKILL_TREE, i, pc->skill_tree[class_idx][i].id == 0 || pc->skill_tree[class_idx][i].id == skill_id);
+
+	return i < MAX_SKILL_TREE && pc->skill_tree[class_idx][i].id == skill_id;
 }
 
 /*==========================================
@@ -12829,6 +12860,7 @@ void pc_defaults(void)
 	pc->maxparameterincrease = pc_maxparameterincrease;
 	pc->statusup = pc_statusup;
 	pc->statusup2 = pc_statusup2;
+	pc->isownskill = pc_isownskill;
 	pc->skillup = pc_skillup;
 	pc->allskillup = pc_allskillup;
 	pc->resetlvl = pc_resetlvl;

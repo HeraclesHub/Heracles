@@ -3662,11 +3662,16 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 				break;
 		}
 
-		int cidx, idx, lv = 0;
+		int cidx, idx, knownlv, lv = 0;
 		cidx = skill->get_index(copy_skill);
 		switch(can_copy(tsd, copy_skill)) {
 		case 1: // Plagiarism
 		{
+
+			knownlv = pc->checkskill(tsd, copy_skill);
+			if (knownlv >= skill_lv)
+				break;
+
 			if (tsd->cloneskill_id) {
 				idx = skill->get_index(tsd->cloneskill_id);
 				if (tsd->status.skill[idx].flag == SKILL_FLAG_PLAGIARIZED) {
@@ -3674,6 +3679,14 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 					tsd->status.skill[idx].lv = 0;
 					tsd->status.skill[idx].flag = 0;
 					clif->deleteskill(tsd, tsd->cloneskill_id, false);
+#if PACKETVER_MAIN_NUM >= 20190807 || PACKETVER_RE_NUM >= 20190807 || PACKETVER_ZERO_NUM >= 20190918
+					if (pc->isownskill(tsd, tsd->cloneskill_id))
+						clif->skillup(tsd, tsd->cloneskill_id, 0, 1);
+#endif
+				} else if (tsd->status.skill[idx].flag >= SKILL_FLAG_REPLACED_LV_0) {
+					tsd->status.skill[idx].lv = tsd->status.skill[idx].flag - SKILL_FLAG_REPLACED_LV_0;
+					tsd->status.skill[idx].flag = SKILL_FLAG_PERMANENT;
+					clif->addskill(tsd, tsd->cloneskill_id);
 				}
 			}
 
@@ -3685,13 +3698,18 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 
 			tsd->status.skill[cidx].id = copy_skill;
 			tsd->status.skill[cidx].lv = lv;
-			tsd->status.skill[cidx].flag = SKILL_FLAG_PLAGIARIZED;
+			tsd->status.skill[cidx].flag = knownlv > 0 ? knownlv + SKILL_FLAG_REPLACED_LV_0 : SKILL_FLAG_PLAGIARIZED;
 			clif->addskill(tsd, copy_skill);
 		}
 		break;
 		case 2: // Reproduce
 		{
+			knownlv = pc->checkskill(tsd, copy_skill);
 			lv = sc ? sc->data[SC__REPRODUCE]->val1 : 1;
+
+			if (knownlv >= lv)
+				break;
+
 			if (tsd->reproduceskill_id) {
 				idx = skill->get_index(tsd->reproduceskill_id);
 				if (tsd->status.skill[idx].flag == SKILL_FLAG_PLAGIARIZED) {
@@ -3699,8 +3717,17 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 					tsd->status.skill[idx].lv = 0;
 					tsd->status.skill[idx].flag = 0;
 					clif->deleteskill(tsd, tsd->reproduceskill_id, false);
+#if PACKETVER_MAIN_NUM >= 20190807 || PACKETVER_RE_NUM >= 20190807 || PACKETVER_ZERO_NUM >= 20190918
+					if (pc->isownskill(tsd, tsd->reproduceskill_id))
+						clif->skillup(tsd, tsd->reproduceskill_id, 0, 1);
+#endif
+				} else if (tsd->status.skill[idx].flag >= SKILL_FLAG_REPLACED_LV_0) {
+					tsd->status.skill[idx].lv = tsd->status.skill[idx].flag - SKILL_FLAG_REPLACED_LV_0;
+					tsd->status.skill[idx].flag = SKILL_FLAG_PERMANENT;
+					clif->addskill(tsd, tsd->reproduceskill_id);
 				}
 			}
+
 			lv = min(lv, skill->get_max(copy_skill));
 
 			tsd->reproduceskill_id = copy_skill;
@@ -3709,7 +3736,7 @@ static int skill_attack(int attack_type, struct block_list *src, struct block_li
 
 			tsd->status.skill[cidx].id = copy_skill;
 			tsd->status.skill[cidx].lv = lv;
-			tsd->status.skill[cidx].flag = SKILL_FLAG_PLAGIARIZED;
+			tsd->status.skill[cidx].flag = knownlv > 0 ? knownlv + SKILL_FLAG_REPLACED_LV_0 : SKILL_FLAG_PLAGIARIZED;
 			clif->addskill(tsd, copy_skill);
 		}
 		break;
