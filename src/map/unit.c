@@ -1345,6 +1345,29 @@ static int unit_resume_running(int tid, int64 tick, int id, intptr_t data)
 
 }
 
+/**
+ * Timer function for applying walk delay
+ * 
+ * @param tid Timer id
+ * @param tick Timer tick
+ * @param id Target id
+ * @param data DWord of delay + type
+ */
+static int unit_set_walkdelay_timer(int tid, int64 tick, int id, intptr_t data)
+{
+	struct block_list *target = map->id2bl(id);
+
+	if (target == NULL)
+		return 0;
+
+	int delay = (int)GetWord((uint32)data, 0);
+	int type = (int)GetWord((uint32)data, 1);
+
+	unit->set_walkdelay(target, tick, delay, type);
+
+	return 0;
+}
+
 /*==========================================
  * Applies walk delay to character, considering that
  * if type is 0, this is a damage induced delay: if previous delay is active, do not change it.
@@ -3236,6 +3259,7 @@ void unit_defaults(void)
 	unit->is_walking = unit_is_walking;
 	unit->can_move = unit_can_move;
 	unit->resume_running = unit_resume_running;
+	unit->set_walkdelay_timer = unit_set_walkdelay_timer;
 	unit->set_walkdelay = unit_set_walkdelay;
 	unit->skilluse_id2 = unit_skilluse_id2;
 	unit->skilluse_pos = unit_skilluse_pos;
