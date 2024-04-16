@@ -321,6 +321,17 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 	if (((d_tbl && sc && check_distance_bl(target, d_tbl, sc->data[SC_DEVOTION]->val3)) || e_tbl) && damage > 0 && skill_id != PA_PRESSURE && skill_id != CR_REFLECTSHIELD)
 		damage = 0;
 
+#ifdef WALKDELAY_SYNC
+	int delay = amotion;
+	int mob_delay;
+
+	if (src->type == BL_MOB && (mob_delay = BL_UCCAST(BL_MOB, src)->status.ddelay) > 0)
+		delay = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
+
+	if (damage > 0)
+		timer->add(timer->gettick() + delay, unit->set_walkdelay_timer, target->id, MakeDWord(delay, skill_id != 0));
+#endif
+
 	if ( !battle_config.delay_battle_damage || amotion <= 1 ) {
 		map->freeblock_lock();
 		status_fix_damage(src, target, damage, ddelay); // We have to separate here between reflect damage and others [icescope]
@@ -349,17 +360,7 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 	if (src->type == BL_PC) {
 		BL_UCAST(BL_PC, src)->delayed_damage++;
 	}
-#ifdef WALKDELAY_SYNC
-	int damage_delay = amotion;
-	int mob_delay;
-
-	if (src->type == BL_MOB && (mob_delay = BL_UCCAST(BL_MOB, src)->status.ddelay) > 0)
-		damage_delay = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
-
-	timer->add(timer->gettick() + damage_delay, battle->delay_damage_sub, 0, (intptr_t)dat);
-#else
 	timer->add(tick + amotion, battle->delay_damage_sub, 0, (intptr_t)dat);
-#endif
 
 	return 0;
 }
