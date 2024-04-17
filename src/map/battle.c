@@ -329,7 +329,7 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 		delay = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
 
 	if (damage > 0)
-		timer->add(timer->gettick() + delay, unit->set_walkdelay_timer, target->id, MakeDWord(delay, skill_id != 0));
+		timer->add(timer->gettick() + delay, unit->set_walkdelay_timer, target->id, MakeDWord(ddelay, skill_id != 0));
 #endif
 
 	if ( !battle_config.delay_battle_damage || amotion <= 1 ) {
