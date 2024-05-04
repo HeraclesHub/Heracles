@@ -1528,8 +1528,8 @@ static int64 battle_calc_defense(int attack_type, struct block_list *src, struct
 				//Sd vit-eq
 #ifndef RENEWAL
 				//[VIT*0.5] + rnd([VIT*0.3], max([VIT*0.3],[VIT^2/150]-1))
-				vit_def = def2*(def2-15)/150;
-				vit_def = def2/2 + (vit_def>0?rnd()%vit_def:0);
+				vit_def = def2 * 3 / 10;
+				vit_def = def2 / 2 + rnd->value(vit_def, max(vit_def, def2 * def2 / 150 - 1));
 #else
 				vit_def = def2;
 #endif
