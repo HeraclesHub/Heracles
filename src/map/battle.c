@@ -275,7 +275,11 @@ static int battle_delay_damage_sub(int tid, int64 tick, int id, intptr_t data)
 					&& (target->m == src->m && check_distance_bl(src, target, dat->distance)))
 			)) {
 				map->freeblock_lock();
+#ifdef WALKDELAY_SYNC
+				status_fix_damage(src, target, dat->damage, 0);
+#else
 				status_fix_damage(src, target, dat->damage, dat->delay);
+#endif
 				if (dat->attack_type && !status->isdead(target) && dat->additional_effects)
 					skill->additional_effect(src,target,dat->skill_id,dat->skill_lv,dat->attack_type,dat->dmg_lv,tick);
 				if (dat->dmg_lv > ATK_BLOCK && dat->attack_type)
@@ -284,7 +288,11 @@ static int battle_delay_damage_sub(int tid, int64 tick, int id, intptr_t data)
 			} else if (src == NULL && dat->skill_id == CR_REFLECTSHIELD) {
 				// it was monster reflected damage, and the monster died, we pass the damage to the character as expected
 				map->freeblock_lock();
+#ifdef WALKDELAY_SYNC
+				status_fix_damage(target, target, dat->damage, 0);
+#else
 				status_fix_damage(target, target, dat->damage, dat->delay);
+#endif
 				map->freeblock_unlock();
 			}
 		}
@@ -321,16 +329,6 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 	if (((d_tbl && sc && check_distance_bl(target, d_tbl, sc->data[SC_DEVOTION]->val3)) || e_tbl) && damage > 0 && skill_id != PA_PRESSURE && skill_id != CR_REFLECTSHIELD)
 		damage = 0;
 
-#ifdef WALKDELAY_SYNC
-	int delay = amotion;
-	int mob_delay;
-
-	if (src->type == BL_MOB && (mob_delay = BL_UCCAST(BL_MOB, src)->status.ddelay) > 0)
-		delay = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
-
-	if (damage > 0)
-		timer->add(timer->gettick() + delay, unit->set_walkdelay_timer, target->id, MakeDWord(ddelay, skill_id != 0));
-#endif
 
 	if ( !battle_config.delay_battle_damage || amotion <= 1 ) {
 		map->freeblock_lock();
@@ -360,6 +358,18 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 	if (src->type == BL_PC) {
 		BL_UCAST(BL_PC, src)->delayed_damage++;
 	}
+
+#ifdef WALKDELAY_SYNC
+	int walkdelay_latency = amotion;
+	int mob_delay;
+
+	if (src->type == BL_MOB && (mob_delay = BL_UCCAST(BL_MOB, src)->status.ddelay) > 0)
+		walkdelay_latency = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
+
+	if (damage > 0)
+		timer->add(timer->gettick() + walkdelay_latency, unit->set_walkdelay_timer, target->id, MakeDWord(ddelay, skill_id != 0));
+#endif
+
 	timer->add(tick + amotion, battle->delay_damage_sub, 0, (intptr_t)dat);
 
 	return 0;
