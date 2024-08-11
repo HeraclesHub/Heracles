@@ -77,8 +77,12 @@ struct s_buyingstore {
  **/
 struct buyingstore_interface {
 	unsigned int nextid;
+	struct DBMap* db;
 	int blankslots[MAX_SLOTS];  // used when checking whether or not an item's card slots are blank
 	struct item_option blankoptions[MAX_ITEM_OPTIONS];  // used for search result temporary.
+	/* */
+	void (*init) (bool minimal);
+	void (*final) (void);
 	/* */
 	bool (*setup) (struct map_session_data* sd, unsigned char slots);
 	void (*create) (struct map_session_data* sd, int zenylimit, unsigned char result, const char* storename, const struct PACKET_CZ_REQ_OPEN_BUYING_STORE_sub* itemlist, unsigned int count);

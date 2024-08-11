@@ -6545,6 +6545,7 @@ int do_final(void)
 	elemental->final();
 	map->list_final();
 	vending->final();
+	buyingstore->final();
 	rodex->final();
 	achievement->final();
 	stylist->final();
@@ -7102,6 +7103,7 @@ int do_init(int argc, char *argv[])
 	bg->init(minimal);
 	duel->init(minimal);
 	vending->init(minimal);
+	buyingstore->init(minimal);
 	rodex->init(minimal);
 	mapiif->init(minimal);
 

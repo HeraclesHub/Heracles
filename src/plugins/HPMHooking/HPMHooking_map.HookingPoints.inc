@@ -220,6 +220,8 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(bg->str2teamtype, HP_bg_str2teamtype) },
 	{ HP_POP(bg->config_read, HP_bg_config_read) },
 /* buyingstore_interface */
+	{ HP_POP(buyingstore->init, HP_buyingstore_init) },
+	{ HP_POP(buyingstore->final, HP_buyingstore_final) },
 	{ HP_POP(buyingstore->setup, HP_buyingstore_setup) },
 	{ HP_POP(buyingstore->create, HP_buyingstore_create) },
 	{ HP_POP(buyingstore->close, HP_buyingstore_close) },
@@ -2828,6 +2830,9 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(pc->expandInventory, HP_pc_expandInventory) },
 	{ HP_POP(pc->auto_exp_insurance, HP_pc_auto_exp_insurance) },
 	{ HP_POP(pc->crimson_marker_clear, HP_pc_crimson_marker_clear) },
+	{ HP_POP(pc->is_own_skill, HP_pc_is_own_skill) },
+	{ HP_POP(pc->clear_existing_cloneskill, HP_pc_clear_existing_cloneskill) },
+	{ HP_POP(pc->clear_existing_reproduceskill, HP_pc_clear_existing_reproduceskill) },
 /* pcre_interface */
 	{ HP_POP(libpcre->compile, HP_libpcre_compile) },
 	{ HP_POP(libpcre->study, HP_libpcre_study) },
