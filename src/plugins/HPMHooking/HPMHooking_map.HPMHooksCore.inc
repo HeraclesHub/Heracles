@@ -400,6 +400,10 @@ struct {
 	struct HPMHookPoint *HP_bg_str2teamtype_post;
 	struct HPMHookPoint *HP_bg_config_read_pre;
 	struct HPMHookPoint *HP_bg_config_read_post;
+	struct HPMHookPoint *HP_buyingstore_init_pre;
+	struct HPMHookPoint *HP_buyingstore_init_post;
+	struct HPMHookPoint *HP_buyingstore_final_pre;
+	struct HPMHookPoint *HP_buyingstore_final_post;
 	struct HPMHookPoint *HP_buyingstore_setup_pre;
 	struct HPMHookPoint *HP_buyingstore_setup_post;
 	struct HPMHookPoint *HP_buyingstore_create_pre;
@@ -5526,6 +5530,12 @@ struct {
 	struct HPMHookPoint *HP_pc_auto_exp_insurance_post;
 	struct HPMHookPoint *HP_pc_crimson_marker_clear_pre;
 	struct HPMHookPoint *HP_pc_crimson_marker_clear_post;
+	struct HPMHookPoint *HP_pc_is_own_skill_pre;
+	struct HPMHookPoint *HP_pc_is_own_skill_post;
+	struct HPMHookPoint *HP_pc_clear_existing_cloneskill_pre;
+	struct HPMHookPoint *HP_pc_clear_existing_cloneskill_post;
+	struct HPMHookPoint *HP_pc_clear_existing_reproduceskill_pre;
+	struct HPMHookPoint *HP_pc_clear_existing_reproduceskill_post;
 	struct HPMHookPoint *HP_libpcre_compile_pre;
 	struct HPMHookPoint *HP_libpcre_compile_post;
 	struct HPMHookPoint *HP_libpcre_study_pre;
@@ -7987,6 +7997,10 @@ struct {
 	int HP_bg_str2teamtype_post;
 	int HP_bg_config_read_pre;
 	int HP_bg_config_read_post;
+	int HP_buyingstore_init_pre;
+	int HP_buyingstore_init_post;
+	int HP_buyingstore_final_pre;
+	int HP_buyingstore_final_post;
 	int HP_buyingstore_setup_pre;
 	int HP_buyingstore_setup_post;
 	int HP_buyingstore_create_pre;
@@ -13113,6 +13127,12 @@ struct {
 	int HP_pc_auto_exp_insurance_post;
 	int HP_pc_crimson_marker_clear_pre;
 	int HP_pc_crimson_marker_clear_post;
+	int HP_pc_is_own_skill_pre;
+	int HP_pc_is_own_skill_post;
+	int HP_pc_clear_existing_cloneskill_pre;
+	int HP_pc_clear_existing_cloneskill_post;
+	int HP_pc_clear_existing_reproduceskill_pre;
+	int HP_pc_clear_existing_reproduceskill_post;
 	int HP_libpcre_compile_pre;
 	int HP_libpcre_compile_post;
 	int HP_libpcre_study_pre;

@@ -147,6 +147,7 @@ skipBeforeFix = (
     "searchstore_getsearchallfunc",
     "searchstore_getsearchfunc",
     "searchstore_getstoreid",
+    "searchstore_getdatabase",
     "searchstore_hasstore",
     "skill_reveal_trap",
     "skill_validate_unit_id_array",

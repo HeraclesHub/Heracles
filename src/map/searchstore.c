@@ -76,6 +76,16 @@ static inline unsigned int searchstore_getstoreid(struct map_session_data *sd, u
 	return 0;
 }
 
+/// return vender/buyer database by type
+static inline struct DBMap* searchstore_getdatabase(unsigned char type)
+{
+	switch (type) {
+		case SEARCHTYPE_VENDING:      return vending->db;
+		case SEARCHTYPE_BUYING_STORE: return buyingstore->db;
+	}
+	return NULL;
+}
+
 static bool searchstore_open(struct map_session_data *sd, unsigned int uses, unsigned short effect)
 {
 	nullpo_retr(false, sd);
@@ -108,6 +118,7 @@ static void searchstore_query(struct map_session_data *sd,
 	struct s_search_store_search s;
 	searchstore_searchall_t store_searchall;
 	time_t querytime;
+	struct DBMap* db;
 
 	if( !battle_config.feature_search_stores ) {
 		return;
@@ -174,6 +185,10 @@ static void searchstore_query(struct map_session_data *sd,
 	// allocate max. amount of results
 	sd->searchstore.items = (struct s_search_store_info_item*)aMalloc(sizeof(struct s_search_store_info_item)*battle_config.searchstore_maxresults);
 
+	// Retrieve required database
+	db = searchstore_getdatabase(type);
+	nullpo_retv(db);
+
 	// search
 	s.search_sd  = sd;
 	s.itemlist   = itemlist;
@@ -182,14 +197,14 @@ static void searchstore_query(struct map_session_data *sd,
 	s.card_count = card_count;
 	s.min_price  = min_price;
 	s.max_price  = max_price;
-	iter         = db_iterator(vending->db);
+	iter         = db_iterator(db);
 
-	for( pl_sd = dbi_first(iter); dbi_exists(iter);  pl_sd = dbi_next(iter) ) {
-		if( sd == pl_sd ) {// skip own shop, if any
+	for (pl_sd = dbi_first(iter); dbi_exists(iter); pl_sd = dbi_next(iter)) {
+		if (sd == pl_sd) { // skip own shop, if any
 			continue;
 		}
 
-		if( !store_searchall(pl_sd, &s) ) {// exceeded result size
+		if (!store_searchall(pl_sd, &s)) { // exceeded result size
 			clif->search_store_info_failed(sd, SSI_FAILED_OVER_MAXCOUNT);
 			break;
 		}
