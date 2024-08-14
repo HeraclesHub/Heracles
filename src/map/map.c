@@ -2138,6 +2138,9 @@ static int map_quit(struct map_session_data *sd)
 		idb_remove(vending->db, sd->status.char_id);
 	}
 
+	if (sd->state.buyingstore)
+		idb_remove(buyingstore->db, sd->status.char_id);
+
 	party->booking_delete(sd); // Party Booking [Spiria]
 	pc->makesavestatus(sd);
 	pc->clean_skilltree(sd);
