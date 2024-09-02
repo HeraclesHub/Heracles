@@ -22,7 +22,7 @@
 #define CONFIG_CORE_H
 
 /// Heracles version in format YYYYMMPPP
-#define HERACLES_VERSION 202408001
+#define HERACLES_VERSION 202408002
 
 /// Hercules version. From tag vYYYY.MM(+PPP) -> YYYYMMPPP
 #define HERCULES_VERSION 202408000
