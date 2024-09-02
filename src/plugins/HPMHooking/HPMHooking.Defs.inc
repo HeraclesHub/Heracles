@@ -638,6 +638,10 @@ typedef void (*HPMHOOK_pre_bg_config_read) (void);
 typedef void (*HPMHOOK_post_bg_config_read) (void);
 #endif // MAP_BATTLEGROUND_H
 #ifdef MAP_BUYINGSTORE_H /* buyingstore */
+typedef void (*HPMHOOK_pre_buyingstore_init) (bool *minimal);
+typedef void (*HPMHOOK_post_buyingstore_init) (bool minimal);
+typedef void (*HPMHOOK_pre_buyingstore_final) (void);
+typedef void (*HPMHOOK_post_buyingstore_final) (void);
 typedef bool (*HPMHOOK_pre_buyingstore_setup) (struct map_session_data **sd, unsigned char *slots);
 typedef bool (*HPMHOOK_post_buyingstore_setup) (bool retVal___, struct map_session_data *sd, unsigned char slots);
 typedef void (*HPMHOOK_pre_buyingstore_create) (struct map_session_data **sd, int *zenylimit, unsigned char *result, const char **storename, const struct PACKET_CZ_REQ_OPEN_BUYING_STORE_sub **itemlist, unsigned int *count);

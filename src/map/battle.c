@@ -1509,7 +1509,7 @@ static int64 battle_calc_defense(int attack_type, struct block_list *src, struct
 				if (target_count >= battle_config.vit_penalty_count) {
 					// Cap to max number of attackers if specified
 					if (battle_config.vit_penalty_max_count > 0)
-						target_count = cap_value(target_count, 0 ,battle_config.vit_penalty_count);
+						target_count = cap_value(target_count, 0, battle_config.vit_penalty_max_count);
 
 					int penalty = (target_count - (battle_config.vit_penalty_count - 1)) * battle_config.vit_penalty_num;
 					if (battle_config.vit_penalty_type == 1) {

@@ -400,6 +400,10 @@ struct {
 	struct HPMHookPoint *HP_bg_str2teamtype_post;
 	struct HPMHookPoint *HP_bg_config_read_pre;
 	struct HPMHookPoint *HP_bg_config_read_post;
+	struct HPMHookPoint *HP_buyingstore_init_pre;
+	struct HPMHookPoint *HP_buyingstore_init_post;
+	struct HPMHookPoint *HP_buyingstore_final_pre;
+	struct HPMHookPoint *HP_buyingstore_final_post;
 	struct HPMHookPoint *HP_buyingstore_setup_pre;
 	struct HPMHookPoint *HP_buyingstore_setup_post;
 	struct HPMHookPoint *HP_buyingstore_create_pre;
@@ -7993,6 +7997,10 @@ struct {
 	int HP_bg_str2teamtype_post;
 	int HP_bg_config_read_pre;
 	int HP_bg_config_read_post;
+	int HP_buyingstore_init_pre;
+	int HP_buyingstore_init_post;
+	int HP_buyingstore_final_pre;
+	int HP_buyingstore_final_post;
 	int HP_buyingstore_setup_pre;
 	int HP_buyingstore_setup_post;
 	int HP_buyingstore_create_pre;

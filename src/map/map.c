@@ -2138,6 +2138,9 @@ static int map_quit(struct map_session_data *sd)
 		idb_remove(vending->db, sd->status.char_id);
 	}
 
+	if (sd->state.buyingstore)
+		idb_remove(buyingstore->db, sd->status.char_id);
+
 	party->booking_delete(sd); // Party Booking [Spiria]
 	pc->makesavestatus(sd);
 	pc->clean_skilltree(sd);
@@ -6545,6 +6548,7 @@ int do_final(void)
 	elemental->final();
 	map->list_final();
 	vending->final();
+	buyingstore->final();
 	rodex->final();
 	achievement->final();
 	stylist->final();
@@ -7102,6 +7106,7 @@ int do_init(int argc, char *argv[])
 	bg->init(minimal);
 	duel->init(minimal);
 	vending->init(minimal);
+	buyingstore->init(minimal);
 	rodex->init(minimal);
 	mapiif->init(minimal);
 

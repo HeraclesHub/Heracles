@@ -1481,7 +1481,7 @@ static int pc_set_hate_mob(struct map_session_data *sd, int pos, struct block_li
  *------------------------------------------*/
 static int pc_reg_received(struct map_session_data *sd)
 {
-	int i, idx = 0, knownlv = 0;
+	int i, idx = 0;
 
 	nullpo_ret(sd);
 	sd->vars_ok = true;
@@ -1656,9 +1656,22 @@ static void pc_calc_skilltree_clear(struct map_session_data *sd)
 	nullpo_retv(sd);
 
 	for (i = 0; i < MAX_SKILL_DB; i++) {
-		if (sd->status.skill[i].flag == SKILL_FLAG_PLAGIARIZED || sd->status.skill[i].flag == SKILL_FLAG_PERM_GRANTED
-		    || sd->status.skill[i].id == sd->cloneskill_id || sd->status.skill[i].id == sd->reproduceskill_id) //Don't touch these
+		// Don't touch these
+		if (sd->status.skill[i].flag == SKILL_FLAG_PLAGIARIZED
+			|| sd->status.skill[i].flag == SKILL_FLAG_PERM_GRANTED
+			|| (sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0
+				&& (sd->status.skill[i].id == sd->cloneskill_id || sd->status.skill[i].id == sd->reproduceskill_id))
+			)
 			continue;
+
+		sd->status.skill[i].id = 0; //First clear skills.
+
+		if (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY || sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0) { // Plagiarized skills were already ignored
+			// Restore original level of skills after deleting earned skills.
+			sd->status.skill[i].lv = (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY) ? 0 : sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
+			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
+		}
+
 		sd->status.skill[i].id = 0; //First clear skills.
 		/* permanent skills that must be re-checked */
 		if (sd->status.skill[i].flag == SKILL_FLAG_PERMANENT) {
@@ -1691,15 +1704,6 @@ static int pc_calc_skilltree(struct map_session_data *sd)
 	int classidx = pc->class2idx(class);
 
 	pc->calc_skilltree_clear(sd);
-
-	for (int i = 0; i < MAX_SKILL_DB; i++) {
-		if ((sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0 && sd->status.skill[i].id != sd->cloneskill_id && sd->status.skill[i].id != sd->reproduceskill_id)
-		    || sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY) {
-			// Restore original level of skills after deleting earned skills.
-			sd->status.skill[i].lv = (sd->status.skill[i].flag == SKILL_FLAG_TEMPORARY) ? 0 : sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
-			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
-		}
-	}
 
 	//Enable Bard/Dancer spirit linked skills.
 	skill->add_bard_dancer_soullink_songs(sd);
@@ -12603,11 +12607,7 @@ void pc_crimson_marker_clear(struct map_session_data *sd)
 }
 
 /**
- * Checks if a skill is a permanent skill that one has prerequisites for or has learned.
- *
- * NOTE: Unfortunately even uninitialized skills have the flag SKILL_FLAG_PERMANENT, so we have to distinguish by id as well.
- *       Ideally a more saner zero value should be used for e_skill_flag.
- * WARNING: This function relies on the skill tree being already calculated / filled.
+ * Check skill_id is part of character's own skill tree
  *
  * @param sd The player to check for.
  * @param skill_id The skill to check for.
@@ -12617,15 +12617,12 @@ static bool pc_is_own_skill(struct map_session_data *sd, uint16 skill_id)
 {
 	nullpo_retr(false, sd);
 
-	int idx = skill->get_index(skill_id);
-	if (idx <= 0)
-		return false; // skill not found
-	if (sd->status.skill[idx].id != skill_id)
-		return false; // not meeting pre-requisites for skill or skill id to index mapping faulty.
-	if (sd->status.skill[idx].flag != SKILL_FLAG_PERMANENT)
-		return false; // script granted or temporary.
+	int class_idx = pc->class2idx(sd->status.class);
+	int i;
 
-	return true;
+	ARR_FIND(0, MAX_SKILL_TREE, i, pc->skill_tree[class_idx][i].id == 0 || pc->skill_tree[class_idx][i].id == skill_id);
+
+	return i < MAX_SKILL_TREE && pc->skill_tree[class_idx][i].id == skill_id;
 }
 
 /**

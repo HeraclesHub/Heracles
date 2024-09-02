@@ -79,6 +79,8 @@ static bool buyingstore_setup(struct map_session_data *sd, unsigned char slots)
 	sd->buyingstore.slots = slots;
 	clif->buyingstore_open(sd);
 
+	idb_put(buyingstore->db, sd->status.char_id, sd);
+
 	return true;
 }
 
@@ -212,6 +214,7 @@ static void buyingstore_close(struct map_session_data *sd)
 
 		// notify other players
 		clif->buyingstore_disappear_entry(&sd->bl);
+		idb_remove(buyingstore->db, sd->status.char_id);
 	}
 }
 
@@ -489,13 +492,26 @@ static bool buyingstore_searchall(struct map_session_data *sd, const struct s_se
 	return true;
 }
 
+static void final(void)
+{
+	db_destroy(buyingstore->db);
+}
+
+static void init(bool minimal)
+{
+	buyingstore->db = idb_alloc(DB_OPT_BASE);
+	buyingstore->nextid = 0;
+}
+
 void buyingstore_defaults(void)
 {
 	buyingstore = &buyingstore_s;
 
-	buyingstore->nextid = 0;
 	memset(buyingstore->blankslots, 0, sizeof(buyingstore->blankslots));
 	memset(buyingstore->blankoptions, 0, sizeof(buyingstore->blankoptions));
+
+	buyingstore->init = init;
+	buyingstore->final = final;
 	/* */
 	buyingstore->setup = buyingstore_setup;
 	buyingstore->create = buyingstore_create;

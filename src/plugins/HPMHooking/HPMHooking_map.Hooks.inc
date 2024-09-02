@@ -5091,6 +5091,58 @@ void HP_bg_config_read(void) {
 	return;
 }
 /* buyingstore_interface */
+void HP_buyingstore_init(bool minimal) {
+	int hIndex = 0;
+	if (HPMHooks.count.HP_buyingstore_init_pre > 0) {
+		void (*preHookFunc) (bool *minimal);
+		*HPMforce_return = false;
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_buyingstore_init_pre; hIndex++) {
+			preHookFunc = HPMHooks.list.HP_buyingstore_init_pre[hIndex].func;
+			preHookFunc(&minimal);
+		}
+		if (*HPMforce_return) {
+			*HPMforce_return = false;
+			return;
+		}
+	}
+	{
+		HPMHooks.source.buyingstore.init(minimal);
+	}
+	if (HPMHooks.count.HP_buyingstore_init_post > 0) {
+		void (*postHookFunc) (bool minimal);
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_buyingstore_init_post; hIndex++) {
+			postHookFunc = HPMHooks.list.HP_buyingstore_init_post[hIndex].func;
+			postHookFunc(minimal);
+		}
+	}
+	return;
+}
+void HP_buyingstore_final(void) {
+	int hIndex = 0;
+	if (HPMHooks.count.HP_buyingstore_final_pre > 0) {
+		void (*preHookFunc) (void);
+		*HPMforce_return = false;
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_buyingstore_final_pre; hIndex++) {
+			preHookFunc = HPMHooks.list.HP_buyingstore_final_pre[hIndex].func;
+			preHookFunc();
+		}
+		if (*HPMforce_return) {
+			*HPMforce_return = false;
+			return;
+		}
+	}
+	{
+		HPMHooks.source.buyingstore.final();
+	}
+	if (HPMHooks.count.HP_buyingstore_final_post > 0) {
+		void (*postHookFunc) (void);
+		for (hIndex = 0; hIndex < HPMHooks.count.HP_buyingstore_final_post; hIndex++) {
+			postHookFunc = HPMHooks.list.HP_buyingstore_final_post[hIndex].func;
+			postHookFunc();
+		}
+	}
+	return;
+}
 bool HP_buyingstore_setup(struct map_session_data *sd, unsigned char slots) {
 	int hIndex = 0;
 	bool retVal___ = false;

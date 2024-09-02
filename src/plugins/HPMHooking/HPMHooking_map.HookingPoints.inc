@@ -220,6 +220,8 @@ struct HookingPointData HookingPoints[] = {
 	{ HP_POP(bg->str2teamtype, HP_bg_str2teamtype) },
 	{ HP_POP(bg->config_read, HP_bg_config_read) },
 /* buyingstore_interface */
+	{ HP_POP(buyingstore->init, HP_buyingstore_init) },
+	{ HP_POP(buyingstore->final, HP_buyingstore_final) },
 	{ HP_POP(buyingstore->setup, HP_buyingstore_setup) },
 	{ HP_POP(buyingstore->create, HP_buyingstore_create) },
 	{ HP_POP(buyingstore->close, HP_buyingstore_close) },
