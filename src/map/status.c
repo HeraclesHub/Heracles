@@ -2378,11 +2378,13 @@ static int status_calc_pc_(struct map_session_data *sd, enum e_status_calc_opt o
 
 	if (memcmp(b_skill, sd->status.skill, sizeof(sd->status.skill))) {
 #if PACKETVER_MAIN_NUM >= 20190807 || PACKETVER_RE_NUM >= 20190807 || PACKETVER_ZERO_NUM >= 20190918
-		// Client doesn't delete unavailable skills even if we refresh
-		// the skill tree, individually delete them.
+		// Client doesn't delete unavailable skills even if we refresh the skill tree, individually delete/update them.
 		for (i = 0; i < MAX_SKILL_DB; i++) {
 			if (b_skill[i].id != 0 && sd->status.skill[i].id == 0) {
-				clif->deleteskill(sd, b_skill[i].id, true);
+				if (pc->is_own_skill(sd, b_skill[i].id))
+					clif->skillinfo(sd, b_skill[i].id, 0);
+				else
+					clif->deleteskill(sd, b_skill[i].id, true);
 			}
 		}
 #endif
