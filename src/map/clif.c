@@ -11838,9 +11838,10 @@ static void clif_parse_WalkToXY(int fd, struct map_session_data *sd)
 
 	// Do not allow one cell move commands if the target cell is not free
 	if (battle_config.official_cell_stack_limit > 0
-		&& (sd->bl.x != x || sd->bl.y != y) // Allow current cell
-		&& check_distance_blxy(&sd->bl, x, y, 1)
-		&& map->count_oncell(sd->bl.m, x, y, BL_CHAR | BL_NPC, 0x1 | 0x2) >= battle_config.official_cell_stack_limit)
+		&& sd->bl.x == x + 1
+		&& sd->bl.y == y
+		&& map->count_oncell(sd->bl.m, x, y, BL_CHAR | BL_NPC, 0x1 | 0x2) >= battle_config.official_cell_stack_limit
+		&& !map->closest_freecell(sd->bl.m, &sd->bl, &x, &y, BL_CHAR | BL_NPC, 0))
 		return;
 
 	pc->delinvincibletimer(sd);
