@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2024 Hercules Dev Team
+ * Copyright (C) 2012-2025 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -10762,6 +10762,19 @@ static void clif_msgtable_color(struct map_session_data *sd, enum clif_messages 
 	clif->send(&p, sizeof(p), &sd->bl, SELF);
 }
 
+static bool clif_validate_message(struct map_session_data *sd, char *message)
+{
+	nullpo_retr(false, message);
+
+	if (strchr(message, '\n') != NULL ||
+	    strchr(message, '\r') != NULL ||
+	    strstr(message, "             ") != NULL) {
+	    return false;
+	}
+
+	return true;
+}
+
 /**
  * Validates and processes a global/guild/party message packet.
  *
@@ -10826,6 +10839,8 @@ static const char *clif_process_chat_message(struct map_session_data *sd, const 
 	safestrncpy(out_buf, packet->message, textlen+1); // [!] packet->message is not necessarily NUL terminated
 	message = out_buf + namelen + 3;
 
+	if (clif->validate_message(sd, out_buf) == false)
+		return NULL;
 	if (!pc->process_chat_message(sd, message))
 		return NULL;
 	return message;
@@ -10881,6 +10896,9 @@ static bool clif_process_whisper_message(struct map_session_data *sd, const stru
 
 	safestrncpy(out_name, packet->name, NAME_LENGTH + 1); // [!] packet->name is not NUL terminated
 	safestrncpy(out_message, packet->message, messagelen+1); // [!] packet->message is not necessarily NUL terminated
+
+	if (clif->validate_message(sd, out_message) == false)
+		return false;
 
 	if (!pc->process_chat_message(sd, out_message))
 		return false;
@@ -26892,6 +26910,7 @@ void clif_defaults(void)
 	clif->messages = clif_displaymessage_sprintf;
 	clif->process_chat_message = clif_process_chat_message;
 	clif->process_whisper_message = clif_process_whisper_message;
+	clif->validate_message = clif_validate_message;
 	clif->wisexin = clif_wisexin;
 	clif->wisall = clif_wisall;
 	clif->PMIgnoreList = clif_PMIgnoreList;

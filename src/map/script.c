@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2024 Hercules Dev Team
+ * Copyright (C) 2012-2025 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -27026,7 +27026,12 @@ static BUILDIN(channelmes)
 		return true;
 	}
 
-	channel->send(chan, NULL, script_getstr(st, 3));
+	char *message = script_getstr(st, 3);
+	if (clif->validate_message(sd, message) == false) {
+		script_pushint(st, 0);
+		return true;
+	}
+	channel->send(chan, NULL, message);
 
 	script_pushint(st, 1);
 	return true;

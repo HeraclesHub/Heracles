@@ -2,7 +2,7 @@
  * This file is part of Hercules.
  * http://herc.ws - http://github.com/HerculesWS/Hercules
  *
- * Copyright (C) 2012-2024 Hercules Dev Team
+ * Copyright (C) 2012-2025 Hercules Dev Team
  * Copyright (C) Athena Dev Teams
  *
  * Hercules is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 #define HERACLES_VERSION 202409000
 
 /// Hercules version. From tag vYYYY.MM(+PPP) -> YYYYMMPPP
-#define HERCULES_VERSION 202411000
+#define HERCULES_VERSION 202501000
 
 /// Max number of items on @autolootid list
 #define AUTOLOOTITEM_SIZE 10
