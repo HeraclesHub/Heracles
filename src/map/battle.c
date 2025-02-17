@@ -367,7 +367,7 @@ static int battle_delay_damage(int64 tick, int amotion, struct block_list *src, 
 		walkdelay_latency = skill_id == 0 ? mob_delay : 0; // Skills have 0 delay?
 
 	if (damage > 0)
-		timer->add(timer->gettick() + walkdelay_latency, unit->set_walkdelay_timer, target->id, MakeDWord(ddelay, skill_id != 0));
+		timer->add(timer->gettick() + walkdelay_latency, unit->set_walkdelay_timer, target->id, ddelay);
 #endif
 
 	timer->add(tick + amotion, battle->delay_damage_sub, 0, (intptr_t)dat);
